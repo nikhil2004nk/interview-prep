@@ -1,0 +1,20 @@
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { TopicsService } from './topics.service';
+import { CreateTopicDto } from './dto/create-topic.dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+
+@Controller('topics')
+@UseGuards(JwtAuthGuard)
+export class TopicsController {
+  constructor(private readonly topicsService: TopicsService) {}
+
+  @Post()
+  create(@Body() createTopicDto: CreateTopicDto) {
+    return this.topicsService.create(createTopicDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.topicsService.findAll();
+  }
+}

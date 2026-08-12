@@ -1,0 +1,532 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  fetchQuestionsApi,
+  createQuestionApi,
+  submitAnswerApi,
+  fetchQuestionPracticesApi
+} from '../api/questions';
+import type { Question, Answer, Difficulty } from '../api/questions';
+import type { Topic, Tag } from '../../notes/api/notes';
+import { fetchTopicsApi, createTopicApi } from '../../topics/api/topics';
+import { fetchTagsApi } from '../../tags/api/tags';
+import { Search, Plus, Save, BookOpen, MessageSquare, Loader2, ArrowLeft, CheckCircle, Target } from 'lucide-react';
+import { Dropdown } from '../../../components/ui/Dropdown';
+import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision';
+
+export const QuestionsPage: React.FC = () => {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
+  const [practices, setPractices] = useState<Answer[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [newTopicId, setNewTopicId] = useState('');
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState('');
+  const [selectedTagFilter, setSelectedTagFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Custom Question Form
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDesc, setNewDesc] = useState('');
+  const [newDifficulty, setNewDifficulty] = useState<Difficulty>('MEDIUM');
+  const [newTags, setNewTags] = useState('');
+
+  // Answer Practicing Form
+  const [userAnswer, setUserAnswer] = useState('');
+  const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const navigate = useNavigate();
+
+  const loadQuestions = async () => {
+    try {
+      const [questionsData, topicsData, tagsData] = await Promise.all([
+        fetchQuestionsApi(),
+        fetchTopicsApi(),
+        fetchTagsApi()
+      ]);
+      setQuestions(questionsData);
+      setTopics(topicsData);
+      setTags(tagsData);
+      if (questionsData.length > 0 && !selectedQuestion) {
+        selectQuestion(questionsData[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load questions', error);
+    }
+  };
+
+  useEffect(() => {
+    loadQuestions();
+  }, []);
+
+  const selectQuestion = async (q: Question) => {
+    setSelectedQuestion(q);
+    setUserAnswer('');
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    setShowAddForm(false);
+    try {
+      const history = await fetchQuestionPracticesApi(q.id);
+      setPractices(history);
+    } catch {
+      setPractices([]);
+    }
+  };
+
+  const handleCreateQuestion = async () => {
+    if (!newTitle.trim()) return;
+    const tagNames = newTags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    try {
+      const created = await createQuestionApi({
+        title: newTitle,
+        description: newDesc,
+        difficulty: newDifficulty,
+        tagNames,
+        topicId: newTopicId || undefined,
+      });
+      setQuestions(prev => [created, ...prev]);
+      selectQuestion(created);
+      setNewTitle('');
+      setNewDesc('');
+      setNewTags('');
+      setNewTopicId('');
+      setShowAddForm(false);
+
+      const updatedTags = await fetchTagsApi();
+      setTags(updatedTags);
+    } catch (error) {
+      console.error('Failed to create question', error);
+    }
+  };
+
+  const handleSubmitAnswer = async () => {
+    if (!selectedQuestion || !userAnswer.trim()) return;
+    setIsSubmittingAnswer(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    try {
+      const res = await submitAnswerApi(selectedQuestion.id, userAnswer);
+      setPractices(prev => [res, ...prev]);
+      setUserAnswer('');
+      setSubmitSuccess(true);
+      setTimeout(() => setSubmitSuccess(false), 3000);
+    } catch (error: any) {
+      setSubmitError(error.message || 'Failed to submit practicing answer.');
+    } finally {
+      setIsSubmittingAnswer(false);
+    }
+  };
+
+  const filteredQuestions = questions.filter(q => {
+    const matchesSearch =
+      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (q.description && q.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      q.tags.some(tag => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesTopic = !selectedTopicFilter || q.topic?.id === selectedTopicFilter;
+    const matchesTag = !selectedTagFilter || q.tags.some(tag => tag.id === selectedTagFilter);
+
+    return matchesSearch && matchesTopic && matchesTag;
+  });
+
+  const getDifficultyColor = (diff: Difficulty) => {
+    switch (diff) {
+      case 'EASY':
+        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+      case 'MEDIUM':
+        return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+      case 'HARD':
+        return 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+      {/* Sidebar List */}
+      <div className="w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex flex-col h-auto md:h-screen">
+        {/* Header / Brand with back navigation */}
+        <div className="p-4 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/60">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/')}
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              title="Back to Notes"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Practice Center
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/goals')}
+              title="Study Goals"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+            >
+              <Target size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/revision')}
+              title="Revision Deck"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+            >
+              <BookOpen size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="px-4 pt-4">
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
+              <Search size={16} />
+            </span>
+            <input
+              type="text"
+              placeholder="Search questions..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="px-4 pt-2 pb-3 border-b border-slate-900/50 space-y-1.5">
+          <Dropdown
+            value={selectedTopicFilter}
+            onChange={setSelectedTopicFilter}
+            options={[
+              { value: '', label: 'All Topics' },
+              ...topics.map(t => ({ value: t.id, label: t.name })),
+            ]}
+            placeholder="All Topics"
+          />
+
+          <Dropdown
+            value={selectedTagFilter}
+            onChange={setSelectedTagFilter}
+            options={[
+              { value: '', label: 'All Tags' },
+              ...tags.map(t => ({ value: t.id, label: `#${t.name}` })),
+            ]}
+            placeholder="All Tags"
+          />
+        </div>
+
+        {/* Questions list */}
+        <div className="flex-1 overflow-y-auto px-2 space-y-1 pb-4">
+          {filteredQuestions.length === 0 ? (
+            <div className="text-center py-8 text-xs text-slate-500 font-medium">
+              No questions found
+            </div>
+          ) : (
+            filteredQuestions.map(q => (
+              <div
+                key={q.id}
+                onClick={() => selectQuestion(q)}
+                className={`p-3.5 rounded-xl border transition-all cursor-pointer group flex flex-col gap-2 ${
+                  selectedQuestion?.id === q.id && !showAddForm
+                    ? 'bg-purple-600/10 border-purple-500/50 shadow-lg'
+                    : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
+                }`}
+              >
+                <div className="flex justify-between items-start gap-2">
+                  <h4 className="font-semibold text-sm text-slate-200 group-hover:text-purple-400 transition-colors line-clamp-2">
+                    {q.title}
+                  </h4>
+                </div>
+                <div className="flex justify-between items-center text-[10px]">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`px-2 py-0.5 rounded-full border ${getDifficultyColor(q.difficulty)}`}>
+                      {q.difficulty}
+                    </span>
+                    {q.topic && (
+                      <span className="text-purple-400 font-semibold truncate max-w-[80px]">
+                        {q.topic.name}
+                      </span>
+                    )}
+                  </div>
+                  {q.tags.length > 0 && (
+                    <span className="text-slate-500 max-w-[80px] truncate">
+                      #{q.tags[0].name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Add Question Button */}
+        <div className="p-4 border-t border-slate-800/80 bg-slate-900/20">
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
+          >
+            <Plus size={16} />
+            Create Question
+          </button>
+        </div>
+      </div>
+
+      {/* Main Workspace */}
+      <div className="flex-1 flex flex-col h-screen bg-slate-950 overflow-y-auto">
+        {showAddForm ? (
+          <div className="max-w-2xl w-full mx-auto p-6 space-y-6">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+              Create Practice Question
+            </h2>
+            <div className="space-y-4 bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-400">Title</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Explain Event Loop in Node.js"
+                  value={newTitle}
+                  onChange={e => setNewTitle(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-400">Difficulty</label>
+                <Dropdown
+                  value={newDifficulty}
+                  onChange={val => setNewDifficulty(val as Difficulty)}
+                  options={[
+                    { value: 'EASY', label: 'EASY' },
+                    { value: 'MEDIUM', label: 'MEDIUM' },
+                    { value: 'HARD', label: 'HARD' },
+                  ]}
+                  placeholder="Select Difficulty"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-400">Topic</label>
+                <div className="flex gap-2">
+                  <Dropdown
+                    value={newTopicId}
+                    onChange={setNewTopicId}
+                    options={[
+                      { value: '', label: 'Select Topic (Optional)' },
+                      ...topics.map(t => ({ value: t.id, label: t.name })),
+                    ]}
+                    placeholder="Select Topic"
+                    className="flex-1"
+                  />
+                  <button
+                    onClick={async () => {
+                      const name = window.prompt("Enter new Topic name:");
+                      if (!name || !name.trim()) return;
+                      try {
+                        const created = await createTopicApi(name.trim());
+                        setTopics(prev => [...prev, created]);
+                        setNewTopicId(created.id);
+                      } catch (error: any) {
+                        alert(error.message || "Failed to create topic.");
+                      }
+                    }}
+                    type="button"
+                    className="px-3.5 bg-slate-900 border border-slate-800/85 text-purple-400 hover:text-purple-300 font-semibold rounded-lg text-xs cursor-pointer transition-colors shrink-0"
+                    title="Create New Topic"
+                  >
+                    + New
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-400">Description / Practice Prompt</label>
+                <textarea
+                  placeholder="Explain the queue systems, microtasks, macrotasks, and libuv..."
+                  rows={4}
+                  value={newDesc}
+                  onChange={e => setNewDesc(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-400">Tags (comma separated)</label>
+                <input
+                  type="text"
+                  placeholder="node, javascript, async"
+                  value={newTags}
+                  onChange={e => setNewTags(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddForm(false)}
+                  className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-lg transition-colors cursor-pointer text-center text-sm border border-slate-700/50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateQuestion}
+                  disabled={!newTitle.trim()}
+                  className="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors border border-transparent disabled:border text-sm"
+                >
+                  Create Question
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : selectedQuestion ? (
+          <div className="flex-1 flex flex-col p-6 space-y-6 max-w-4xl w-full mx-auto">
+            {/* Question Details */}
+            <div className="space-y-3 border-b border-slate-900 pb-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className={`px-2.5 py-0.5 rounded-full border text-xs font-semibold ${getDifficultyColor(selectedQuestion.difficulty)}`}>
+                    {selectedQuestion.difficulty}
+                  </span>
+                  {selectedQuestion.topic && (
+                    <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
+                      {selectedQuestion.topic.name}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={async () => {
+                    try {
+                      await addToRevisionApi(selectedQuestion.id, RevisionItemType.QUESTION);
+                      alert('Question added to revision deck!');
+                    } catch (error: any) {
+                      alert(error.message || 'Failed to add to revisions');
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded-lg text-xs transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1.5 shrink-0"
+                >
+                  <BookOpen size={12} />
+                  Queue Revision
+                </button>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-100 leading-tight">
+                {selectedQuestion.title}
+              </h1>
+              {selectedQuestion.description && (
+                <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-wrap">
+                  {selectedQuestion.description}
+                </p>
+              )}
+            </div>
+
+            {/* Submit practice area */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <BookOpen size={14} className="text-purple-400" />
+                  Your practice answer
+                </label>
+                {submitSuccess && (
+                  <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                    <CheckCircle size={12} /> Practiced recorded!
+                  </span>
+                )}
+              </div>
+              
+              {submitError && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs p-3 rounded-lg">
+                  {submitError}
+                </div>
+              )}
+
+              <textarea
+                value={userAnswer}
+                onChange={e => setUserAnswer(e.target.value)}
+                placeholder="Draft your practicing response here. Include code blocks, methodologies, and explanations..."
+                rows={8}
+                className="w-full p-4 bg-slate-900/30 border border-slate-800/80 focus:border-purple-500/50 focus:outline-none rounded-xl text-slate-200 placeholder:text-slate-700 leading-relaxed text-sm md:text-base resize-none"
+              />
+
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSubmitAnswer}
+                  disabled={isSubmittingAnswer || !userAnswer.trim()}
+                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed disabled:shadow-none text-white font-semibold rounded-lg text-xs shadow-lg transition-all flex items-center gap-2 cursor-pointer border border-transparent disabled:border"
+                >
+                  {isSubmittingAnswer ? (
+                    <>
+                      <Loader2 size={12} className="animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={12} />
+                      Submit Answer
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Practicing History */}
+            <div className="space-y-4 pt-4">
+              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <MessageSquare size={14} className="text-pink-400" />
+                Practice history ({practices.length})
+              </h3>
+              
+              {practices.length === 0 ? (
+                <div className="text-center py-6 border border-dashed border-slate-800 rounded-xl text-xs text-slate-600 font-medium">
+                  No practice records yet. Write and submit your first answer above!
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {practices.map(ans => (
+                    <div key={ans.id} className="bg-slate-900/20 border border-slate-800/50 rounded-xl p-5 space-y-3 relative hover:border-slate-800 transition-colors">
+                      <div className="flex justify-between items-start gap-4">
+                        <p className="text-xs text-slate-500 font-medium">
+                          Submitted on {new Date(ans.createdAt).toLocaleDateString()} at {new Date(ans.createdAt).toLocaleTimeString()}
+                        </p>
+                        {ans.score !== undefined && ans.score !== null && (
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                            Score: {ans.score}/100
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
+                        {ans.userAnswer}
+                      </p>
+                      
+                      {/* AI Feedbacks details block wrapper (placeholder for Phase 10) */}
+                      <div className="mt-3 p-3 bg-purple-950/5 border border-purple-500/10 rounded-lg text-xs">
+                        <span className="font-semibold text-purple-400 block mb-1">🤖 Evaluation:</span>
+                        <p className="text-slate-500 italic">
+                          {ans.feedback || 'Answer recorded. Practice evaluations and AI assessments will be generated once AI Integration is complete in Phase 10.'}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+              <BookOpen size={24} />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-slate-300">No Question Selected</h3>
+              <p className="text-slate-500 text-sm max-w-xs">
+                Select a practice question from the explorer or create a custom practicing challenge to start your prep.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
