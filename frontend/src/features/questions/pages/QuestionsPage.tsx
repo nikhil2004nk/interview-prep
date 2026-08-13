@@ -500,12 +500,49 @@ export const QuestionsPage: React.FC = () => {
                         {ans.userAnswer}
                       </p>
                       
-                      {/* AI Feedbacks details block wrapper (placeholder for Phase 10) */}
-                      <div className="mt-3 p-3 bg-purple-950/5 border border-purple-500/10 rounded-lg text-xs">
-                        <span className="font-semibold text-purple-400 block mb-1">🤖 Evaluation:</span>
-                        <p className="text-slate-500 italic">
-                          {ans.feedback || 'Answer recorded. Practice evaluations and AI assessments will be generated once AI Integration is complete in Phase 10.'}
-                        </p>
+                      {/* AI Feedbacks details block wrapper */}
+                      <div className="mt-3 p-4 bg-purple-950/15 border border-purple-500/10 rounded-xl text-xs space-y-2">
+                        <span className="font-bold text-purple-400 flex items-center gap-1.5 text-xs">
+                          🤖 AI Evaluation:
+                        </span>
+                        {ans.feedback ? (
+                          <div className="space-y-2 text-slate-350 leading-relaxed">
+                            {ans.feedback.split('\n').map((line, idx) => {
+                              const trimmed = line.trim();
+                              if (!trimmed) return null;
+                              if (trimmed.startsWith('###')) {
+                                return (
+                                  <h4 key={idx} className="font-bold text-purple-300 text-sm mt-3 mb-1 first:mt-0">
+                                    {trimmed.replace('###', '').trim()}
+                                  </h4>
+                                );
+                              }
+                              if (trimmed.startsWith('####')) {
+                                return (
+                                  <h5 key={idx} className="font-bold text-slate-200 mt-2">
+                                    {trimmed.replace('####', '').trim()}
+                                  </h5>
+                                );
+                              }
+                              if (trimmed.startsWith('**Score:**')) {
+                                return null; // We already show the badge
+                              }
+                              if (trimmed.startsWith('-')) {
+                                return (
+                                  <div key={idx} className="flex gap-2 pl-2">
+                                    <span className="text-purple-500 font-bold">•</span>
+                                    <span>{trimmed.substring(1).trim().replace(/`/g, '')}</span>
+                                  </div>
+                                );
+                              }
+                              return <p key={idx}>{trimmed}</p>;
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-slate-500 italic">
+                            No feedback generated yet.
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}

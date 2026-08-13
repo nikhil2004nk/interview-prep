@@ -4,9 +4,14 @@ import { AnswersService } from './answers.service';
 import { AnswersController } from './answers.controller';
 import { Answer } from './answer.entity';
 import { Question } from '../questions/question.entity';
+import { AiEvaluation } from '../ai/ai-evaluation.entity';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Answer, Question])],
+  imports: [
+    TypeOrmModule.forFeature([Answer, Question, AiEvaluation]),
+    AiModule,
+  ],
   controllers: [AnswersController],
   providers: [AnswersService],
   exports: [AnswersService],
