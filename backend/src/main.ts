@@ -6,6 +6,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 
 const server = express();
+let initialized = false;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
@@ -22,6 +23,7 @@ async function bootstrap() {
   });
 
   await app.init();
+  initialized = true;
   
   // Only listen on a port if not running in a serverless environment (like Vercel)
   if (!process.env.VERCEL) {
@@ -29,6 +31,13 @@ async function bootstrap() {
     await app.listen(port);
   }
 }
-bootstrap();
 
-export default server;
+const bootstrapPromise = bootstrap();
+
+export default async (req: any, res: any) => {
+  if (!initialized) {
+    await bootstrapPromise;
+  }
+  server(req, res);
+};
+
