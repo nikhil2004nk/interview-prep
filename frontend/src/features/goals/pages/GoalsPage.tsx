@@ -167,12 +167,12 @@ export const GoalsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/')}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
               title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>
-            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
               Study Goals
             </span>
           </div>
@@ -180,28 +180,28 @@ export const GoalsPage: React.FC = () => {
             <button
               onClick={() => navigate('/notes')}
               title="Notes Workspace"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
             >
               <FileText size={16} />
             </button>
             <button
               onClick={() => navigate('/questions')}
               title="Practice Center"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-primary-400 transition-colors cursor-pointer"
             >
               <HelpCircle size={16} />
             </button>
             <button
               onClick={() => navigate('/revision')}
               title="Revision Deck"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
             >
               <BookOpen size={16} />
             </button>
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
             >
               <LogOut size={16} />
             </button>
@@ -219,12 +219,12 @@ export const GoalsPage: React.FC = () => {
               placeholder="Search goals..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-350 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
                 title="Clear Search"
               >
                 <X size={14} />
@@ -273,7 +273,7 @@ export const GoalsPage: React.FC = () => {
                 }}
                 className={`p-3.5 rounded-xl border transition-all cursor-pointer group flex flex-col gap-2 ${
                   selectedGoal?.id === g.id && !showAddForm
-                    ? 'bg-purple-600/10 border-purple-500/50 shadow-lg'
+                    ? 'bg-primary-600/10 border-primary-500/50 shadow-lg'
                     : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
                 }`}
               >
@@ -283,17 +283,17 @@ export const GoalsPage: React.FC = () => {
                       e.stopPropagation();
                       handleToggleGoal(g.id);
                     }}
-                    className="mt-0.5 text-slate-400 hover:text-purple-400 transition-colors cursor-pointer shrink-0"
+                    className="mt-0.5 text-slate-400 hover:text-primary-400 transition-colors cursor-pointer shrink-0"
                   >
                     {g.completed ? (
-                      <CheckSquare size={16} className="text-purple-400" />
+                      <CheckSquare size={16} className="text-primary-400" />
                     ) : (
                       <Square size={16} />
                     )}
                   </button>
                   <div className="min-w-0 flex-1">
                     <h4 className={`text-sm font-semibold truncate transition-colors ${
-                      g.completed ? 'text-slate-500 line-through' : 'text-slate-200 group-hover:text-purple-400'
+                      g.completed ? 'text-slate-500 line-through' : 'text-slate-200 group-hover:text-primary-400'
                     }`}>
                       {g.title}
                     </h4>
@@ -312,7 +312,7 @@ export const GoalsPage: React.FC = () => {
         <div className="p-4 border-t border-slate-800/80 bg-slate-900/20">
           <button
             onClick={() => setShowAddForm(true)}
-            className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
+            className="w-full py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
           >
             <Plus size={16} />
             Set New Goal
@@ -325,10 +325,10 @@ export const GoalsPage: React.FC = () => {
         {showAddForm ? (
           <div className="max-w-2xl w-full mx-auto p-6 space-y-6">
             <div className="flex items-center gap-3">
-              <button onClick={() => setShowAddForm(false)} className="md:hidden p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setShowAddForm(false)} className="md:hidden p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors">
                 <ArrowLeft size={18} />
               </button>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-secondary-500 bg-clip-text text-transparent">
                 Set Interview Target Goal
               </h2>
             </div>
@@ -340,7 +340,7 @@ export const GoalsPage: React.FC = () => {
                   placeholder="e.g. Master NestJS Dependency Injections"
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
                 />
               </div>
 
@@ -350,7 +350,7 @@ export const GoalsPage: React.FC = () => {
                   type="date"
                   value={newTargetDate}
                   onChange={e => setNewTargetDate(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200 cursor-pointer"
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm focus:outline-none text-slate-200 cursor-pointer"
                 />
               </div>
 
@@ -363,7 +363,7 @@ export const GoalsPage: React.FC = () => {
                       onClick={() => toggleTopicSelection(t.id)}
                       className={`p-2.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all flex items-center gap-2 select-none ${
                         selectedTopicIds.includes(t.id)
-                          ? 'bg-purple-600/10 border-purple-500/50 text-purple-300'
+                          ? 'bg-primary-600/10 border-primary-500/50 text-primary-300'
                           : 'bg-transparent border-slate-800/80 hover:bg-slate-900/30'
                       }`}
                     >
@@ -371,7 +371,7 @@ export const GoalsPage: React.FC = () => {
                         type="checkbox"
                         checked={selectedTopicIds.includes(t.id)}
                         readOnly
-                        className="rounded accent-purple-500 cursor-pointer pointer-events-none"
+                        className="rounded accent-primary-500 cursor-pointer pointer-events-none"
                       />
                       <span className="truncate">{t.name}</span>
                     </div>
@@ -391,7 +391,7 @@ export const GoalsPage: React.FC = () => {
                   type="button"
                   onClick={handleCreateGoal}
                   disabled={!newTitle.trim() || !newTargetDate}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors border border-transparent disabled:border text-sm"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors border border-transparent disabled:border text-sm"
                 >
                   Create Goal
                 </button>
@@ -423,7 +423,7 @@ export const GoalsPage: React.FC = () => {
                   <span className="text-xs text-slate-500 block">goals completed</span>
                 </div>
                 <div className="w-14 h-14 rounded-full border-4 border-slate-850 flex items-center justify-center text-xs font-black bg-slate-950 shadow-inner relative">
-                  <div className="absolute inset-0 rounded-full border-4 border-purple-500 border-t-transparent border-r-transparent rotate-45 animate-pulse"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-primary-500 border-t-transparent border-r-transparent rotate-45 animate-pulse"></div>
                   {completionPercentage}%
                 </div>
               </div>
@@ -434,7 +434,7 @@ export const GoalsPage: React.FC = () => {
               <div className="flex justify-between items-start gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/25 font-bold uppercase tracking-wider">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-primary-500/10 text-primary-400 border border-primary-500/25 font-bold uppercase tracking-wider">
                       Study Target
                     </span>
                     <span className="text-xs text-slate-500 flex items-center gap-1">
@@ -451,7 +451,7 @@ export const GoalsPage: React.FC = () => {
 
                 <button
                   onClick={() => handleDeleteGoal(selectedGoal.id)}
-                  className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer shrink-0 border border-transparent hover:border-slate-750"
+                  className="p-2 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer shrink-0 border border-transparent hover:border-slate-750"
                   title="Delete Goal"
                 >
                   <Trash2 size={16} />
@@ -484,7 +484,7 @@ export const GoalsPage: React.FC = () => {
                   className={`px-5 py-2 rounded-lg text-xs font-semibold shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 border ${
                     selectedGoal.completed
                       ? 'bg-slate-900 text-slate-400 hover:text-slate-200 border-slate-800'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white border-transparent'
+                      : 'bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white border-transparent'
                   }`}
                 >
                   {selectedGoal.completed ? (

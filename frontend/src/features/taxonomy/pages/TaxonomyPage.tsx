@@ -331,12 +331,12 @@ export const TaxonomyPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
             title="Back to Dashboard"
           >
             <ArrowLeft size={16} />
           </button>
-          <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent text-lg">
+          <span className="font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent text-lg">
             Manage Taxonomy
           </span>
         </div>
@@ -345,28 +345,28 @@ export const TaxonomyPage: React.FC = () => {
           <button
             onClick={() => navigate('/notes')}
             title="Notes Workspace"
-            className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
           >
             <FileText size={16} />
           </button>
           <button
             onClick={() => navigate('/questions')}
             title="Practice Center"
-            className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-primary-400 transition-colors cursor-pointer"
           >
             <HelpCircle size={16} />
           </button>
           <button
             onClick={() => navigate('/goals')}
             title="Study Goals"
-            className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-secondary-400 transition-colors cursor-pointer"
           >
             <Target size={16} />
           </button>
           <button
             onClick={() => navigate('/revision')}
             title="Revision Deck"
-            className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
           >
             <BookOpen size={16} />
           </button>
@@ -379,12 +379,12 @@ export const TaxonomyPage: React.FC = () => {
         <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
-              <BookOpen size={16} className="text-purple-400" />
+              <BookOpen size={16} className="text-primary-400" />
               Topics ({totalTopics})
             </h2>
             <button
               onClick={() => setShowNewTopicForm(true)}
-              className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-455 border border-purple-500/20 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 bg-primary-600/10 hover:bg-primary-600/20 text-primary-455 border border-primary-500/20 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
             >
               <Plus size={12} /> Add Topic
             </button>
@@ -400,12 +400,12 @@ export const TaxonomyPage: React.FC = () => {
               placeholder="Search topics..."
               value={topicSearch}
               onChange={e => setTopicSearch(e.target.value)}
-              className="w-full pl-7 pr-7 py-1 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-7 pr-7 py-1 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {topicSearch && (
               <button
                 onClick={() => setTopicSearch('')}
-                className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-500 hover:text-slate-355 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
               >
                 <X size={12} />
               </button>
@@ -432,7 +432,7 @@ export const TaxonomyPage: React.FC = () => {
                           type="text"
                           value={editTopicName}
                           onChange={e => setEditTopicName(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-slate-955 border border-slate-800 focus:border-purple-500/50 rounded-lg text-xs text-slate-200 focus:outline-none"
+                          className="w-full px-3 py-1.5 bg-slate-955 border border-slate-800 focus:border-primary-500/50 rounded-lg text-xs text-slate-200 focus:outline-none"
                         />
                       </div>
                       <div className="space-y-1">
@@ -441,20 +441,20 @@ export const TaxonomyPage: React.FC = () => {
                           value={editTopicDesc}
                           onChange={e => setEditTopicDesc(e.target.value)}
                           rows={2}
-                          className="w-full px-3 py-1.5 bg-slate-955 border border-slate-800 focus:border-purple-500/50 rounded-lg text-xs text-slate-200 focus:outline-none"
+                          className="w-full px-3 py-1.5 bg-slate-955 border border-slate-800 focus:border-primary-500/50 rounded-lg text-xs text-slate-200 focus:outline-none"
                         />
                       </div>
                       <div className="flex justify-end gap-1.5">
                         <button
                           onClick={() => setEditingTopicId(null)}
-                          className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                          className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                           title="Cancel"
                         >
                           <X size={14} />
                         </button>
                         <button
                           onClick={() => handleUpdateTopic(t.id)}
-                          className="p-1 hover:bg-purple-950/40 rounded text-emerald-455 hover:text-emerald-400 transition-colors cursor-pointer"
+                          className="p-1 hover:bg-primary-950/40 rounded text-emerald-455 hover:text-emerald-400 transition-colors cursor-pointer"
                           title="Save Changes"
                         >
                           <Check size={14} />
@@ -476,7 +476,7 @@ export const TaxonomyPage: React.FC = () => {
                             setEditTopicName(t.name);
                             setEditTopicDesc(t.description || '');
                           }}
-                          className="p-1 hover:bg-slate-900 rounded text-slate-500 hover:text-purple-400 transition-colors cursor-pointer"
+                          className="p-1 hover:bg-slate-900 rounded text-slate-500 hover:text-primary-400 transition-colors cursor-pointer"
                           title="Edit Topic"
                         >
                           <Edit2 size={12} />
@@ -501,7 +501,7 @@ export const TaxonomyPage: React.FC = () => {
             <button
               disabled={topicPage === 1}
               onClick={() => setTopicPage(p => Math.max(p - 1, 1))}
-              className="px-2.5 py-1.5 bg-slate-950/40 border border-slate-850 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-350 cursor-pointer transition-colors"
+              className="px-2.5 py-1.5 bg-slate-950/40 border border-slate-850 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 cursor-pointer transition-colors"
             >
               Previous
             </button>
@@ -509,7 +509,7 @@ export const TaxonomyPage: React.FC = () => {
             <button
               disabled={topicPage === totalTopicPages}
               onClick={() => setTopicPage(p => Math.min(p + 1, totalTopicPages))}
-              className="px-2.5 py-1.5 bg-slate-955/40 border border-slate-855 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-355 cursor-pointer transition-colors"
+              className="px-2.5 py-1.5 bg-slate-955/40 border border-slate-855 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 cursor-pointer transition-colors"
             >
               Next
             </button>
@@ -520,12 +520,12 @@ export const TaxonomyPage: React.FC = () => {
         <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
-              <TagIcon size={16} className="text-pink-400" />
+              <TagIcon size={16} className="text-secondary-400" />
               Tags ({totalTags})
             </h2>
             <button
               onClick={() => setShowNewTagForm(true)}
-              className="px-3 py-1.5 bg-pink-650/10 hover:bg-pink-600/20 text-pink-400 border border-pink-500/20 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 bg-secondary-650/10 hover:bg-secondary-600/20 text-secondary-400 border border-secondary-500/20 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
             >
               <Plus size={12} /> Add Tag
             </button>
@@ -541,12 +541,12 @@ export const TaxonomyPage: React.FC = () => {
               placeholder="Search tags (min 3 chars)..."
               value={tagSearch}
               onChange={e => setTagSearch(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 bg-slate-955 border border-pink-500/50 rounded-lg text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-2 bg-slate-955 border border-secondary-500/50 rounded-lg text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {tagSearch && (
               <button
                 onClick={() => setTagSearch('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-505 hover:text-slate-355 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-505 hover:text-slate-300 cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -571,17 +571,17 @@ export const TaxonomyPage: React.FC = () => {
                         type="text"
                         value={editTagName}
                         onChange={e => setEditTagName(e.target.value)}
-                        className="bg-slate-955 border border-slate-800 focus:border-pink-500/50 rounded px-2.5 py-1 text-xs text-slate-200 flex-1 focus:outline-none"
+                        className="bg-slate-955 border border-slate-800 focus:border-secondary-500/50 rounded px-2.5 py-1 text-xs text-slate-200 flex-1 focus:outline-none"
                       />
                       <button
                         onClick={() => setEditingTagId(null)}
-                        className="p-1 hover:bg-slate-800 rounded text-slate-400 transition-colors cursor-pointer shrink-0"
+                        className="p-1 hover:bg-slate-850 rounded text-slate-400 transition-colors cursor-pointer shrink-0"
                       >
                         <X size={12} />
                       </button>
                       <button
                         onClick={() => handleUpdateTag(t.id)}
-                        className="p-1 hover:bg-pink-950/40 rounded text-emerald-450 transition-colors cursor-pointer shrink-0"
+                        className="p-1 hover:bg-secondary-950/40 rounded text-emerald-450 transition-colors cursor-pointer shrink-0"
                       >
                         <Check size={12} />
                       </button>
@@ -595,7 +595,7 @@ export const TaxonomyPage: React.FC = () => {
                             setEditingTagId(t.id);
                             setEditTagName(t.name);
                           }}
-                          className="p-1 hover:bg-slate-900 rounded text-slate-500 hover:text-pink-400 transition-colors cursor-pointer"
+                          className="p-1 hover:bg-slate-900 rounded text-slate-500 hover:text-secondary-400 transition-colors cursor-pointer"
                           title="Edit Tag"
                         >
                           <Edit2 size={12} />
@@ -620,7 +620,7 @@ export const TaxonomyPage: React.FC = () => {
             <button
               disabled={tagPage === 1}
               onClick={() => setTopicPage(p => Math.max(p - 1, 1))}
-              className="px-2.5 py-1.5 bg-slate-950/40 border border-slate-850 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-350 cursor-pointer transition-colors"
+              className="px-2.5 py-1.5 bg-slate-950/40 border border-slate-850 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 cursor-pointer transition-colors"
             >
               Previous
             </button>
@@ -628,7 +628,7 @@ export const TaxonomyPage: React.FC = () => {
             <button
               disabled={tagPage === totalTagPages}
               onClick={() => setTagPage(p => Math.min(p + 1, totalTagPages))}
-              className="px-2.5 py-1.5 bg-slate-955/40 border border-slate-855 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-355 cursor-pointer transition-colors"
+              className="px-2.5 py-1.5 bg-slate-955/40 border border-slate-855 hover:bg-slate-900 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 cursor-pointer transition-colors"
             >
               Next
             </button>
@@ -650,7 +650,7 @@ export const TaxonomyPage: React.FC = () => {
               id="modalBulkTopic"
               checked={isBulkTopic}
               onChange={e => setIsBulkTopic(e.target.checked)}
-              className="rounded border-slate-800 accent-purple-600 cursor-pointer"
+              className="rounded border-slate-800 accent-primary-600 cursor-pointer"
             />
             <label htmlFor="modalBulkTopic" className="text-xs text-slate-400 font-semibold cursor-pointer">Bulk Creation Mode</label>
           </div>
@@ -663,7 +663,7 @@ export const TaxonomyPage: React.FC = () => {
                 value={bulkTopicText}
                 onChange={e => setBulkTopicText(e.target.value)}
                 rows={5}
-                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-purple-500/50 leading-relaxed"
+                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-primary-500/50 leading-relaxed"
                 required
               />
             </div>
@@ -676,7 +676,7 @@ export const TaxonomyPage: React.FC = () => {
                   placeholder="e.g. Node.js Streams"
                   value={newTopicName}
                   onChange={e => setNewTopicName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-955/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-purple-500/50"
+                  className="w-full px-3 py-2 bg-slate-955/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-primary-500/50"
                   required
                 />
               </div>
@@ -687,7 +687,7 @@ export const TaxonomyPage: React.FC = () => {
                   value={newTopicDesc}
                   onChange={e => setNewTopicDesc(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 bg-slate-955/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-purple-500/50"
+                  className="w-full px-3 py-2 bg-slate-955/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-primary-500/50"
                 />
               </div>
             </>
@@ -703,7 +703,7 @@ export const TaxonomyPage: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
             >
               Create
             </button>
@@ -725,7 +725,7 @@ export const TaxonomyPage: React.FC = () => {
               id="modalBulkTag"
               checked={isBulkTag}
               onChange={e => setIsBulkTag(e.target.checked)}
-              className="rounded border-slate-800 accent-pink-600 cursor-pointer"
+              className="rounded border-slate-800 accent-secondary-600 cursor-pointer"
             />
             <label htmlFor="modalBulkTag" className="text-xs text-slate-400 font-semibold cursor-pointer">Bulk Creation Mode</label>
           </div>
@@ -738,7 +738,7 @@ export const TaxonomyPage: React.FC = () => {
                 value={bulkTagText}
                 onChange={e => setBulkTagText(e.target.value)}
                 rows={5}
-                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-pink-500/50 leading-relaxed"
+                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-850 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-secondary-500/50 leading-relaxed"
                 required
               />
             </div>
@@ -750,7 +750,7 @@ export const TaxonomyPage: React.FC = () => {
                 placeholder="e.g. async-flow"
                 value={newTagName}
                 onChange={e => setNewTagName(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-955/60 border border-slate-855 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-pink-500/50"
+                className="w-full px-3 py-2 bg-slate-955/60 border border-slate-855 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-secondary-500/50"
                 required
               />
             </div>
@@ -766,7 +766,7 @@ export const TaxonomyPage: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
             >
               Create
             </button>

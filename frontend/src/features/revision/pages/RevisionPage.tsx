@@ -118,17 +118,17 @@ export const RevisionPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/')}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
               title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>
             <div className="flex flex-col">
-              <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
                 Revision Deck
               </span>
               {filteredRecords.length > 0 && (
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-black self-start mt-0.5">
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary-500/10 text-primary-400 border border-primary-500/20 font-black self-start mt-0.5">
                   {filteredRecords.length} Due Today
                 </span>
               )}
@@ -138,28 +138,28 @@ export const RevisionPage: React.FC = () => {
             <button
               onClick={() => navigate('/notes')}
               title="Notes Workspace"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
             >
               <FileText size={16} />
             </button>
             <button
               onClick={() => navigate('/questions')}
               title="Practice Center"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-primary-400 transition-colors cursor-pointer"
             >
               <HelpCircle size={16} />
             </button>
             <button
               onClick={() => navigate('/goals')}
               title="Study Goals"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-secondary-400 transition-colors cursor-pointer"
             >
               <Target size={16} />
             </button>
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
             >
               <LogOut size={16} />
             </button>
@@ -213,14 +213,14 @@ export const RevisionPage: React.FC = () => {
                 }}
                 className={`p-3 rounded-xl border transition-all cursor-pointer group flex flex-col gap-1.5 ${
                   selectedRecord?.id === r.id
-                    ? 'bg-purple-600/10 border-purple-500/50 shadow-md'
+                    ? 'bg-primary-600/10 border-primary-500/50 shadow-md'
                     : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className={`text-[9px] px-1.5 py-0.5 rounded font-black tracking-wider uppercase ${
                     r.itemType === RevisionItemType.NOTE
-                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                      ? 'bg-primary-500/10 text-primary-400 border border-primary-500/20'
                       : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                   }`}>
                     {r.itemType}
@@ -248,7 +248,7 @@ export const RevisionPage: React.FC = () => {
           <div className="flex-1 flex flex-col p-6 max-w-2xl w-full mx-auto justify-center space-y-6">
             {/* Flashcard Frame */}
             <div className="bg-slate-900/35 border border-slate-800/80 rounded-2xl p-6 min-h-[350px] flex flex-col justify-between shadow-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-60"></div>
+              <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-blue-500 opacity-60"></div>
               
               {/* Card Front details */}
               <div className="space-y-4">
@@ -256,13 +256,13 @@ export const RevisionPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setSelectedRecord(null)}
-                      className="md:hidden p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                      className="md:hidden p-1 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors"
                     >
                       <ArrowLeft size={14} />
                     </button>
                     <span className={`text-[10px] px-2.5 py-0.5 rounded font-black uppercase ${
                       selectedRecord.itemType === RevisionItemType.NOTE
-                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25'
+                        ? 'bg-primary-500/10 text-primary-400 border border-primary-500/25'
                         : 'bg-blue-500/10 text-blue-400 border border-blue-500/25'
                     }`}>
                       {selectedRecord.itemType} CARD
@@ -275,7 +275,7 @@ export const RevisionPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => handleRemove(selectedRecord.id)}
-                    className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                    className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                     title="Remove from spaced repetition deck"
                   >
                     <Trash2 size={15} />
@@ -284,7 +284,7 @@ export const RevisionPage: React.FC = () => {
 
                 <div className="space-y-2">
                   {selectedRecord.item?.topic && (
-                    <span className="text-xs text-purple-400/90 font-semibold block uppercase tracking-wider">
+                    <span className="text-xs text-primary-400/90 font-semibold block uppercase tracking-wider">
                       Topic: {selectedRecord.item.topic.name}
                     </span>
                   )}
@@ -311,7 +311,7 @@ export const RevisionPage: React.FC = () => {
                   <div className="h-28 flex items-center justify-center border border-dashed border-slate-800/80 rounded-xl bg-slate-900/10">
                     <button
                       onClick={() => setIsRevealed(true)}
-                      className="px-5 py-2.5 bg-slate-900 hover:bg-slate-850 text-purple-400 hover:text-purple-300 font-bold text-xs rounded-lg transition-all flex items-center gap-2 cursor-pointer border border-slate-800"
+                      className="px-5 py-2.5 bg-slate-900 hover:bg-slate-850 text-primary-400 hover:text-primary-300 font-bold text-xs rounded-lg transition-all flex items-center gap-2 cursor-pointer border border-slate-800"
                     >
                       <Eye size={14} />
                       Reveal Recall Content

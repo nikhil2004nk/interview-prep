@@ -60,8 +60,8 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
     title={title}
     className={`p-1 rounded-md transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
       isActive
-        ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
-        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 border border-transparent'
+        ? 'bg-primary-600/20 text-primary-400 border border-primary-500/30'
+        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850/60 border border-transparent'
     }`}
   >
     {children}
@@ -129,7 +129,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ colors, activeColor, onSelect
           title={c.name}
           className={`w-6 h-6 rounded-md border transition-all cursor-pointer hover:scale-110 ${
             activeColor === c.color
-              ? 'border-purple-400 ring-1 ring-purple-400/50'
+              ? 'border-primary-400 ring-1 ring-primary-400/50'
               : 'border-slate-700 hover:border-slate-500'
           }`}
           style={{
@@ -327,8 +327,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               title="Text Color"
               className={`flex items-center gap-0.5 p-1 rounded-md transition-all cursor-pointer border ${
                 currentTextColor
-                  ? 'border-purple-500/30 bg-purple-600/10'
-                  : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/60'
+                  ? 'border-primary-500/30 bg-primary-600/10'
+                  : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-850/60'
               }`}
             >
               <Palette size={14} style={{ color: currentTextColor || undefined }} />
@@ -360,8 +360,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               title="Highlight"
               className={`flex items-center gap-0.5 p-1 rounded-md transition-all cursor-pointer border ${
                 currentHighlight
-                  ? 'border-purple-500/30 bg-purple-600/10'
-                  : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/60'
+                  ? 'border-primary-500/30 bg-primary-600/10'
+                  : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-850/60'
               }`}
             >
               <Highlighter size={14} style={{ color: currentHighlight ? currentHighlight.replace('30', 'ff') : undefined }} />

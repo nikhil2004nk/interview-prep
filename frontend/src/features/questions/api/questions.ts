@@ -30,6 +30,8 @@ export interface CreateQuestionFields {
   tagNames?: string[];
 }
 
+export type UpdateQuestionFields = Partial<CreateQuestionFields>;
+
 export async function fetchQuestionsApi(): Promise<Question[]> {
   return apiFetch<Question[]>('/questions');
 }
@@ -37,6 +39,13 @@ export async function fetchQuestionsApi(): Promise<Question[]> {
 export async function createQuestionApi(fields: CreateQuestionFields): Promise<Question> {
   return apiFetch<Question>('/questions', {
     method: 'POST',
+    body: JSON.stringify(fields),
+  });
+}
+
+export async function updateQuestionApi(id: string, fields: UpdateQuestionFields): Promise<Question> {
+  return apiFetch<Question>(`/questions/${id}`, {
+    method: 'PATCH',
     body: JSON.stringify(fields),
   });
 }

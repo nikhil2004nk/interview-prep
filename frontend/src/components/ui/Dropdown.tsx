@@ -39,7 +39,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3.5 py-2 bg-slate-900/60 border border-slate-800/80 rounded-lg text-xs font-semibold text-slate-300 hover:border-slate-700/60 focus:outline-none focus:border-purple-500/50 disabled:bg-slate-950/40 disabled:text-slate-600 disabled:border-slate-800/40 disabled:cursor-not-allowed transition-all text-left select-none cursor-pointer"
+        className="w-full flex items-center justify-between px-3.5 py-2 bg-slate-900/60 border border-slate-800/80 rounded-lg text-xs font-semibold text-slate-300 hover:border-slate-700/60 focus:outline-none focus:border-primary-500/50 disabled:bg-slate-950/40 disabled:text-slate-600 disabled:border-slate-800/40 disabled:cursor-not-allowed transition-all text-left select-none cursor-pointer"
       >
         <span className="truncate">
           {selectedOption ? selectedOption.label : placeholder}
@@ -66,9 +66,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     onChange(opt.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3.5 py-2 text-xs transition-colors hover:bg-purple-600/10 hover:text-purple-400 cursor-pointer block truncate ${
+                  className={`w-full text-left px-3.5 py-2 text-xs transition-colors hover:bg-primary-600/10 hover:text-primary-400 cursor-pointer block truncate ${
                     opt.value === value
-                      ? 'bg-purple-600/15 text-purple-400 font-semibold'
+                      ? 'bg-primary-600/15 text-primary-400 font-semibold'
                       : 'text-slate-300'
                   }`}
                 >

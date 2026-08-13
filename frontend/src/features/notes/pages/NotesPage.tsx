@@ -200,10 +200,10 @@ export const NotesPage: React.FC = () => {
         {/* Header / Brand */}
         <div className="p-4 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/60">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-pink-600 flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary-600 to-secondary-600 flex items-center justify-center font-bold text-sm">
               📚
             </div>
-            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
               Notes Workspace
             </span>
           </div>
@@ -211,35 +211,35 @@ export const NotesPage: React.FC = () => {
             <button
               onClick={() => navigate('/')}
               title="Dashboard"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
             >
               <LayoutGrid size={16} />
             </button>
             <button
               onClick={() => navigate('/questions')}
               title="Practice Center"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-primary-400 transition-colors cursor-pointer"
             >
               <HelpCircle size={16} />
             </button>
             <button
               onClick={() => navigate('/goals')}
               title="Study Goals"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-secondary-400 transition-colors cursor-pointer"
             >
               <Target size={16} />
             </button>
             <button
               onClick={() => navigate('/revision')}
               title="Revision Deck"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
             >
               <BookOpen size={16} />
             </button>
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
             >
               <LogOut size={16} />
             </button>
@@ -257,12 +257,12 @@ export const NotesPage: React.FC = () => {
               placeholder="Search title, tags..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-1.5 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-1.5 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-350 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
                 title="Clear Search"
               >
                 <X size={14} />
@@ -311,12 +311,12 @@ export const NotesPage: React.FC = () => {
                 onClick={() => selectNote(note)}
                 className={`p-2.5 rounded-lg border transition-all cursor-pointer group flex justify-between items-start ${
                   selectedNote?.id === note.id
-                    ? 'bg-purple-600/10 border-purple-500/50 shadow-md'
+                    ? 'bg-primary-600/10 border-primary-500/50 shadow-md'
                     : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
                 }`}
               >
                 <div className="space-y-1 flex-1 min-w-0 pr-2">
-                  <h4 className="font-semibold text-sm truncate text-slate-200 group-hover:text-purple-400 transition-colors">
+                  <h4 className="font-semibold text-sm truncate text-slate-200 group-hover:text-primary-400 transition-colors">
                     {note.title || 'Untitled'}
                   </h4>
                   <p className="text-xs text-slate-400 truncate">
@@ -325,7 +325,7 @@ export const NotesPage: React.FC = () => {
                   {(note.tags.length > 0 || note.topic) && (
                     <div className="flex flex-wrap gap-1 pt-1.5 items-center">
                       {note.topic && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/25">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary-500/10 text-primary-400 font-semibold border border-primary-500/25">
                           {note.topic.name}
                         </span>
                       )}
@@ -342,7 +342,7 @@ export const NotesPage: React.FC = () => {
                     e.stopPropagation();
                     handleDelete(note.id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-all cursor-pointer"
+                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-red-400 transition-all cursor-pointer"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -355,7 +355,7 @@ export const NotesPage: React.FC = () => {
         <div className="p-2 border-t border-slate-800/80 bg-slate-900/20">
           <button
             onClick={handleNewNote}
-            className="w-full py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 text-[11px]"
+            className="w-full py-1.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-lg shadow flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 text-[11px]"
           >
             <Plus size={12} />
             Create Note
@@ -375,11 +375,11 @@ export const NotesPage: React.FC = () => {
                     setSelectedNote(null);
                     setIsEditing(false);
                   }}
-                  className="md:hidden p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="md:hidden p-1 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                 >
                   <ArrowLeft size={14} />
                 </button>
-                <FileText size={14} className="text-purple-400" />
+                <FileText size={14} className="text-primary-400" />
                 <span className="text-[10px] text-slate-500 font-semibold tracking-wide uppercase">
                   {selectedNote ? 'Note Workspace' : 'Drafting Note'}
                 </span>
@@ -406,7 +406,7 @@ export const NotesPage: React.FC = () => {
                           });
                         }
                       }}
-                      className="px-2 py-1 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded text-[10px] transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1"
+                      className="px-2 py-1 bg-primary-600/10 hover:bg-primary-600/20 text-primary-400 font-semibold rounded text-[10px] transition-colors border border-primary-500/20 cursor-pointer flex items-center gap-1"
                     >
                       <BookOpen size={10} />
                       Revision
@@ -420,13 +420,13 @@ export const NotesPage: React.FC = () => {
                         setTopicId('');
                         setIsEditing(false);
                       }}
-                      className="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold rounded text-[10px] transition-colors border border-slate-800/80 cursor-pointer"
+                      className="px-2 py-1 bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-slate-200 font-semibold rounded text-[10px] transition-colors border border-slate-800/80 cursor-pointer"
                     >
                       Close
                     </button>
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-lg text-xs transition-colors cursor-pointer border border-slate-800/80"
+                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-850 text-slate-300 font-semibold rounded-lg text-xs transition-colors cursor-pointer border border-slate-800/80"
                     >
                       Edit Note
                     </button>
@@ -442,14 +442,14 @@ export const NotesPage: React.FC = () => {
                         setTopicId('');
                         setIsEditing(false);
                       }}
-                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold rounded-lg text-xs transition-colors border border-slate-800/80 cursor-pointer"
+                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-slate-200 font-semibold rounded-lg text-xs transition-colors border border-slate-800/80 cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleSave}
                       disabled={isSaving || !hasChanges || !title.trim() || !content.trim()}
-                      className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg text-xs shadow-md disabled:shadow-none border border-transparent disabled:border transition-all flex items-center gap-1.5 cursor-pointer"
+                      className="px-4 py-1.5 bg-primary-600 hover:bg-primary-500 disabled:bg-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg text-xs shadow-md disabled:shadow-none border border-transparent disabled:border transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       {isSaving ? (
                         <>
@@ -481,9 +481,9 @@ export const NotesPage: React.FC = () => {
 
             {/* Guide Info */}
             {!selectedNote && (
-              <div className="bg-purple-950/15 border border-purple-500/15 rounded-xl p-4 text-xs text-purple-300 space-y-1">
-                <p className="font-semibold text-purple-200">💡 Drafting a new note</p>
-                <p className="text-purple-400">Provide a title, enter tags separated by commas, write your notes, and then click "Save Note" to save it.</p>
+              <div className="bg-primary-950/15 border border-primary-500/15 rounded-xl p-4 text-xs text-primary-300 space-y-1">
+                <p className="font-semibold text-primary-200">💡 Drafting a new note</p>
+                <p className="text-primary-400">Provide a title, enter tags separated by commas, write your notes, and then click "Save Note" to save it.</p>
               </div>
             )}
 
@@ -533,7 +533,7 @@ export const NotesPage: React.FC = () => {
                             }
                             setTagInput('');
                           }}
-                          className="text-xs text-purple-400 hover:text-purple-300 font-bold px-1 hover:bg-slate-850 rounded shrink-0 cursor-pointer"
+                          className="text-xs text-primary-400 hover:text-primary-300 font-bold px-1 hover:bg-slate-850 rounded shrink-0 cursor-pointer"
                         >
                           +
                         </button>
@@ -551,7 +551,7 @@ export const NotesPage: React.FC = () => {
                                   setTagsList(prev => [...prev, t.name]);
                                   setTagInput('');
                                 }}
-                                className="w-full text-left px-2.5 py-1.5 hover:bg-purple-600/10 text-xs text-purple-400 hover:text-purple-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
+                                className="w-full text-left px-2.5 py-1.5 hover:bg-primary-600/10 text-xs text-primary-400 hover:text-primary-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
                               >
                                 <span>#{t.name}</span>
                                 <span className="text-[9px] text-slate-500 font-semibold bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/80">Existing Tag</span>
@@ -580,7 +580,7 @@ export const NotesPage: React.FC = () => {
 
                   {tagsList.length > 0 ? (
                     tagsList.map(tag => (
-                      <span key={tag} className="flex items-center gap-1 px-2 py-0.5 bg-slate-900 border border-slate-850/80 rounded-full text-[10px] text-purple-400 font-bold">
+                      <span key={tag} className="flex items-center gap-1 px-2 py-0.5 bg-slate-900 border border-slate-850/80 rounded-full text-[10px] text-primary-400 font-bold">
                         #{tag}
                         {isEditing && (
                           <button
@@ -606,7 +606,7 @@ export const NotesPage: React.FC = () => {
                 {/* Topic */}
                 <div className="relative min-w-0">
                   {topicId ? (
-                    <div className="flex items-center gap-1.5 bg-slate-950/20 border border-slate-800/80 px-2.5 py-1 rounded-xl text-xs text-purple-400 font-semibold">
+                    <div className="flex items-center gap-1.5 bg-slate-950/20 border border-slate-800/80 px-2.5 py-1 rounded-xl text-xs text-primary-400 font-semibold">
                       <BookOpen size={11} className="text-slate-500 shrink-0" />
                       <span className="truncate">{topics.find(t => t.id === topicId)?.name || topicId}</span>
                       {isEditing && (
@@ -644,7 +644,7 @@ export const NotesPage: React.FC = () => {
                                   setTopicId(t.id);
                                   setTopicSearch('');
                                 }}
-                                className="w-full text-left px-2.5 py-1.5 hover:bg-purple-600/10 text-xs text-purple-400 hover:text-purple-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
+                                className="w-full text-left px-2.5 py-1.5 hover:bg-primary-600/10 text-xs text-primary-400 hover:text-primary-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
                               >
                                 <span>{t.name}</span>
                                 <span className="text-[9px] text-slate-500 font-semibold bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/80">Existing Topic</span>
@@ -695,7 +695,7 @@ export const NotesPage: React.FC = () => {
                           key={t.id}
                           type="button"
                           onClick={() => setTagsList(prev => [...prev, t.name])}
-                          className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                          className="px-2 py-0.5 bg-slate-900/50 hover:bg-primary-950/20 hover:border-primary-500/30 text-[10px] text-slate-450 hover:text-primary-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
                         >
                           +{t.name}
                         </button>
@@ -710,7 +710,7 @@ export const NotesPage: React.FC = () => {
                           key={t.id}
                           type="button"
                           onClick={() => setTopicId(t.id)}
-                          className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                          className="px-2 py-0.5 bg-slate-900/50 hover:bg-primary-950/20 hover:border-primary-500/30 text-[10px] text-slate-450 hover:text-primary-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
                         >
                           +{t.name}
                         </button>
@@ -741,7 +741,7 @@ export const NotesPage: React.FC = () => {
             </div>
             <button
               onClick={handleNewNote}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-purple-400 hover:text-purple-300 font-semibold rounded-lg text-sm border border-purple-500/20 cursor-pointer transition-colors"
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-850 text-primary-400 hover:text-primary-300 font-semibold rounded-lg text-sm border border-primary-500/20 cursor-pointer transition-colors"
             >
               Get Started
             </button>

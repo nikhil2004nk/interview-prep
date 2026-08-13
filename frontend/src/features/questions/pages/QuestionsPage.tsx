@@ -5,13 +5,14 @@ import {
   createQuestionApi,
   submitAnswerApi,
   fetchQuestionPracticesApi,
-  deleteQuestionApi
+  deleteQuestionApi,
+  updateQuestionApi
 } from '../api/questions';
 import type { Question, Answer, Difficulty } from '../api/questions';
 import type { Topic, Tag } from '../../notes/api/notes';
 import { fetchTopicsApi, createTopicApi } from '../../topics/api/topics';
 import { fetchTagsApi } from '../../tags/api/tags';
-import { Search, Plus, Save, BookOpen, MessageSquare, Loader2, ArrowLeft, CheckCircle, Target, Trash2, X } from 'lucide-react';
+import { Search, Plus, Save, BookOpen, MessageSquare, Loader2, ArrowLeft, CheckCircle, Target, Trash2, X, Edit } from 'lucide-react';
 import { Dropdown } from '../../../components/ui/Dropdown';
 import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision';
 import { Modal } from '../../../components/ui/Modal';
@@ -38,6 +39,7 @@ export const QuestionsPage: React.FC = () => {
   
   // Custom Question Form
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newDifficulty, setNewDifficulty] = useState<Difficulty>('MEDIUM');
@@ -95,29 +97,42 @@ export const QuestionsPage: React.FC = () => {
     }
   };
 
-  const handleCreateQuestion = async () => {
+  const handleSaveQuestion = async () => {
     if (!newTitle.trim()) return;
     const tagNames = newTagsList;
     try {
-      const created = await createQuestionApi({
-        title: newTitle,
-        description: newDesc,
-        difficulty: newDifficulty,
-        tagNames,
-        topicId: newTopicId || undefined,
-      });
-      setQuestions(prev => [created, ...prev]);
-      selectQuestion(created);
+      let saved: Question;
+      if (isEditingQuestion && selectedQuestion) {
+        saved = await updateQuestionApi(selectedQuestion.id, {
+          title: newTitle,
+          description: newDesc,
+          difficulty: newDifficulty,
+          tagNames,
+          topicId: newTopicId || undefined,
+        });
+        setQuestions(prev => prev.map(q => q.id === saved.id ? saved : q));
+      } else {
+        saved = await createQuestionApi({
+          title: newTitle,
+          description: newDesc,
+          difficulty: newDifficulty,
+          tagNames,
+          topicId: newTopicId || undefined,
+        });
+        setQuestions(prev => [saved, ...prev]);
+      }
+      selectQuestion(saved);
       setNewTitle('');
       setNewDesc('');
       setNewTagsList([]);
       setNewTopicId('');
       setShowAddForm(false);
+      setIsEditingQuestion(false);
 
       const updatedTags = await fetchTagsApi();
       setTags(updatedTags);
     } catch (error) {
-      console.error('Failed to create question', error);
+      console.error('Failed to save question', error);
     }
   };
 
@@ -173,12 +188,12 @@ export const QuestionsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/')}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
               title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>
-            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
               Practice Center
             </span>
           </div>
@@ -186,14 +201,14 @@ export const QuestionsPage: React.FC = () => {
             <button
               onClick={() => navigate('/goals')}
               title="Study Goals"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-secondary-400 transition-colors cursor-pointer"
             >
               <Target size={16} />
             </button>
             <button
               onClick={() => navigate('/revision')}
               title="Revision Deck"
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
             >
               <BookOpen size={16} />
             </button>
@@ -211,12 +226,12 @@ export const QuestionsPage: React.FC = () => {
               placeholder="Search questions..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-350 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
                 title="Clear Search"
               >
                 <X size={14} />
@@ -273,12 +288,12 @@ export const QuestionsPage: React.FC = () => {
                 onClick={() => selectQuestion(q)}
                 className={`p-3.5 rounded-xl border transition-all cursor-pointer group flex flex-col gap-2 ${
                   selectedQuestion?.id === q.id && !showAddForm
-                    ? 'bg-purple-600/10 border-purple-500/50 shadow-lg'
+                    ? 'bg-primary-600/10 border-primary-500/50 shadow-lg'
                     : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
                 }`}
               >
                 <div className="flex justify-between items-start gap-2">
-                  <h4 className="font-semibold text-sm text-slate-200 group-hover:text-purple-400 transition-colors line-clamp-2">
+                  <h4 className="font-semibold text-sm text-slate-200 group-hover:text-primary-400 transition-colors line-clamp-2">
                     {q.title}
                   </h4>
                 </div>
@@ -288,7 +303,7 @@ export const QuestionsPage: React.FC = () => {
                       {q.difficulty}
                     </span>
                     {q.topic && (
-                      <span className="text-purple-400 font-semibold truncate max-w-[80px]">
+                      <span className="text-primary-400 font-semibold truncate max-w-[80px]">
                         {q.topic.name}
                       </span>
                     )}
@@ -307,8 +322,16 @@ export const QuestionsPage: React.FC = () => {
         {/* Add Question Button */}
         <div className="p-4 border-t border-slate-800/80 bg-slate-900/20">
           <button
-            onClick={() => setShowAddForm(true)}
-            className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
+            onClick={() => {
+              setShowAddForm(true);
+              setIsEditingQuestion(false);
+              setNewTitle('');
+              setNewDesc('');
+              setNewDifficulty('MEDIUM');
+              setNewTagsList([]);
+              setNewTopicId('');
+            }}
+            className="w-full py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
           >
             <Plus size={16} />
             Create Question
@@ -321,11 +344,11 @@ export const QuestionsPage: React.FC = () => {
         {showAddForm ? (
           <div className="max-w-2xl w-full mx-auto p-6 space-y-6">
             <div className="flex items-center gap-3">
-              <button onClick={() => setShowAddForm(false)} className="md:hidden p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setShowAddForm(false)} className="md:hidden p-1.5 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors">
                 <ArrowLeft size={18} />
               </button>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                Create Practice Question
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-secondary-500 bg-clip-text text-transparent">
+                {isEditingQuestion ? 'Edit Practice Question' : 'Create Practice Question'}
               </h2>
             </div>
             <div className="space-y-4 bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl">
@@ -336,7 +359,7 @@ export const QuestionsPage: React.FC = () => {
                   placeholder="e.g. Explain Event Loop in Node.js"
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
                 />
               </div>
 
@@ -357,7 +380,7 @@ export const QuestionsPage: React.FC = () => {
               <div className="space-y-1 relative">
                 <label className="text-xs font-semibold text-slate-400">Topic</label>
                 {newTopicId ? (
-                  <div className="flex items-center justify-between bg-slate-950/20 border border-slate-800/80 px-3 py-1.5 rounded-xl w-full text-xs text-purple-400 font-semibold">
+                  <div className="flex items-center justify-between bg-slate-950/20 border border-slate-800/80 px-3 py-1.5 rounded-xl w-full text-xs text-primary-400 font-semibold">
                     <span className="flex items-center gap-1.5">
                       <BookOpen size={12} className="text-slate-500" />
                       Topic: {topics.find(t => t.id === newTopicId)?.name || newTopicId}
@@ -397,7 +420,7 @@ export const QuestionsPage: React.FC = () => {
                                 setNewTopicId(t.id);
                                 setTopicSearch('');
                               }}
-                              className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                              className="px-2 py-0.5 bg-slate-900/50 hover:bg-primary-950/20 hover:border-primary-500/30 text-[10px] text-slate-450 hover:text-primary-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
                             >
                               +{t.name}
                             </button>
@@ -439,10 +462,9 @@ export const QuestionsPage: React.FC = () => {
                 <label className="text-xs font-semibold text-slate-400">Description / Practice Prompt</label>
                 <textarea
                   placeholder="Explain the queue systems, microtasks, macrotasks, and libuv..."
-                  rows={4}
                   value={newDesc}
                   onChange={e => setNewDesc(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
+                  className="w-full px-4 py-3 bg-slate-950/60 border border-slate-800/80 focus:border-primary-500/50 rounded-lg text-sm focus:outline-none text-slate-200 min-h-[150px] md:min-h-[250px] max-h-[500px] overflow-y-auto resize-y"
                 />
               </div>
 
@@ -475,7 +497,7 @@ export const QuestionsPage: React.FC = () => {
                        }
                        setNewTagInput('');
                      }}
-                     className="text-xs text-purple-400 hover:text-purple-300 font-bold px-1 hover:bg-slate-850 rounded shrink-0 cursor-pointer"
+                     className="text-xs text-primary-400 hover:text-primary-300 font-bold px-1 hover:bg-slate-850 rounded shrink-0 cursor-pointer"
                    >
                      +
                    </button>
@@ -493,7 +515,7 @@ export const QuestionsPage: React.FC = () => {
                              setNewTagsList(prev => [...prev, t.name]);
                              setNewTagInput('');
                            }}
-                           className="w-full text-left px-2.5 py-1.5 hover:bg-purple-600/10 text-xs text-purple-400 hover:text-purple-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
+                           className="w-full text-left px-2.5 py-1.5 hover:bg-primary-600/10 text-xs text-primary-400 hover:text-primary-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
                          >
                            <span>#{t.name}</span>
                            <span className="text-[9px] text-slate-500 font-semibold bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/80">Existing Tag</span>
@@ -521,7 +543,7 @@ export const QuestionsPage: React.FC = () => {
                  {newTagsList.length > 0 && (
                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                      {newTagsList.map(tag => (
-                       <span key={tag} className="flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-900 border border-slate-850/80 rounded-full text-[10px] text-purple-400 font-bold">
+                       <span key={tag} className="flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-900 border border-slate-850/80 rounded-full text-[10px] text-primary-400 font-bold">
                          #{tag}
                          <button
                            type="button"
@@ -543,7 +565,7 @@ export const QuestionsPage: React.FC = () => {
                          key={t.id}
                          type="button"
                          onClick={() => setNewTagsList(prev => [...prev, t.name])}
-                         className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                         className="px-2 py-0.5 bg-slate-900/50 hover:bg-primary-950/20 hover:border-primary-500/30 text-[10px] text-slate-450 hover:text-primary-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
                        >
                          +{t.name}
                        </button>
@@ -552,7 +574,7 @@ export const QuestionsPage: React.FC = () => {
                  )}
                </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
@@ -562,11 +584,11 @@ export const QuestionsPage: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleCreateQuestion}
+                  onClick={handleSaveQuestion}
                   disabled={!newTitle.trim()}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors border border-transparent disabled:border text-sm"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors border border-transparent disabled:border text-sm"
                 >
-                  Create Question
+                  {isEditingQuestion ? 'Update Question' : 'Create Question'}
                 </button>
               </div>
             </div>
@@ -578,7 +600,7 @@ export const QuestionsPage: React.FC = () => {
             </button>
             {/* Question Details */}
             <div className="space-y-3 border-b border-slate-900 pb-6">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 items-start">
                 <div className="flex items-center gap-3">
                   <span className={`px-2.5 py-0.5 rounded-full border text-xs font-semibold ${getDifficultyColor(selectedQuestion.difficulty)}`}>
                     {selectedQuestion.difficulty}
@@ -609,10 +631,25 @@ export const QuestionsPage: React.FC = () => {
                         });
                       }
                     }}
-                    className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded-lg text-xs transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-1.5 bg-primary-600/10 hover:bg-primary-600/20 text-primary-400 font-semibold rounded-lg text-xs transition-colors border border-primary-500/20 cursor-pointer flex items-center gap-1.5"
                   >
                     <BookOpen size={12} />
                     Queue Revision
+                  </button>
+                  <button
+                    onClick={() => {
+                      setNewTitle(selectedQuestion.title);
+                      setNewDesc(selectedQuestion.description || '');
+                      setNewDifficulty(selectedQuestion.difficulty);
+                      setNewTagsList(selectedQuestion.tags.map(t => t.name));
+                      setNewTopicId(selectedQuestion.topic?.id || '');
+                      setIsEditingQuestion(true);
+                      setShowAddForm(true);
+                    }}
+                    className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-blue-400 transition-colors cursor-pointer border border-transparent hover:border-slate-800/80"
+                    title="Edit Question"
+                  >
+                    <Edit size={14} />
                   </button>
                   <button
                     onClick={() => {
@@ -638,7 +675,7 @@ export const QuestionsPage: React.FC = () => {
                         }
                       });
                     }}
-                    className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer border border-transparent hover:border-slate-800/80"
+                    className="p-1.5 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer border border-transparent hover:border-slate-800/80"
                     title="Delete Question"
                   >
                     <Trash2 size={14} />
@@ -659,7 +696,7 @@ export const QuestionsPage: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <BookOpen size={14} className="text-purple-400" />
+                  <BookOpen size={14} className="text-primary-400" />
                   Your practice answer
                 </label>
                 {submitSuccess && (
@@ -679,15 +716,14 @@ export const QuestionsPage: React.FC = () => {
                 value={userAnswer}
                 onChange={e => setUserAnswer(e.target.value)}
                 placeholder="Draft your practicing response here. Include code blocks, methodologies, and explanations..."
-                rows={8}
-                className="w-full p-4 bg-slate-900/30 border border-slate-800/80 focus:border-purple-500/50 focus:outline-none rounded-xl text-slate-200 placeholder:text-slate-700 leading-relaxed text-sm md:text-base resize-none"
+                className="w-full p-4 bg-slate-900/30 border border-slate-800/80 focus:border-primary-500/50 focus:outline-none rounded-xl text-slate-200 placeholder:text-slate-700 leading-relaxed text-sm md:text-base min-h-[200px] md:min-h-[300px] max-h-[600px] overflow-y-auto resize-y"
               />
 
               <div className="flex justify-end">
                 <button
                   onClick={handleSubmitAnswer}
                   disabled={isSubmittingAnswer || !userAnswer.trim()}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed disabled:shadow-none text-white font-semibold rounded-lg text-xs shadow-lg transition-all flex items-center gap-2 cursor-pointer border border-transparent disabled:border"
+                  className="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-600 disabled:border-slate-800/80 disabled:cursor-not-allowed disabled:shadow-none text-white font-semibold rounded-lg text-xs shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-transparent disabled:border"
                 >
                   {isSubmittingAnswer ? (
                     <>
@@ -707,7 +743,7 @@ export const QuestionsPage: React.FC = () => {
             {/* Practicing History */}
             <div className="space-y-4 pt-4">
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <MessageSquare size={14} className="text-pink-400" />
+                <MessageSquare size={14} className="text-secondary-400" />
                 Practice history ({practices.length})
               </h3>
               
@@ -724,7 +760,7 @@ export const QuestionsPage: React.FC = () => {
                           Submitted on {new Date(ans.createdAt).toLocaleDateString()} at {new Date(ans.createdAt).toLocaleTimeString()}
                         </p>
                         {ans.score !== undefined && ans.score !== null && (
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-primary-500/10 text-primary-400 border border-primary-500/20">
                             Score: {ans.score}/100
                           </span>
                         )}
@@ -734,18 +770,18 @@ export const QuestionsPage: React.FC = () => {
                       </p>
                       
                       {/* AI Feedbacks details block wrapper */}
-                      <div className="mt-3 p-4 bg-purple-950/15 border border-purple-500/10 rounded-xl text-xs space-y-2">
-                        <span className="font-bold text-purple-400 flex items-center gap-1.5 text-xs">
+                      <div className="mt-3 p-4 bg-primary-950/15 border border-primary-500/10 rounded-xl text-xs space-y-2">
+                        <span className="font-bold text-primary-400 flex items-center gap-1.5 text-xs">
                           🤖 AI Evaluation:
                         </span>
                         {ans.feedback ? (
-                          <div className="space-y-2 text-slate-350 leading-relaxed">
+                          <div className="space-y-2 text-slate-300 leading-relaxed">
                             {ans.feedback.split('\n').map((line, idx) => {
                               const trimmed = line.trim();
                               if (!trimmed) return null;
                               if (trimmed.startsWith('###')) {
                                 return (
-                                  <h4 key={idx} className="font-bold text-purple-300 text-sm mt-3 mb-1 first:mt-0">
+                                  <h4 key={idx} className="font-bold text-primary-300 text-sm mt-3 mb-1 first:mt-0">
                                     {trimmed.replace('###', '').trim()}
                                   </h4>
                                 );
@@ -763,7 +799,7 @@ export const QuestionsPage: React.FC = () => {
                               if (trimmed.startsWith('-')) {
                                 return (
                                   <div key={idx} className="flex gap-2 pl-2">
-                                    <span className="text-purple-500 font-bold">•</span>
+                                    <span className="text-primary-500 font-bold">•</span>
                                     <span>{trimmed.substring(1).trim().replace(/`/g, '')}</span>
                                   </div>
                                 );

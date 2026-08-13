@@ -31,7 +31,7 @@ export const Modal: React.FC<ModalProps> = ({
       case 'error':
         return <AlertTriangle className="text-red-400" size={24} />;
       case 'confirm':
-        return <HelpCircle className="text-purple-450" size={24} />;
+        return <HelpCircle className="text-primary-450" size={24} />;
       default:
         return <Info className="text-blue-400" size={24} />;
     }
@@ -59,7 +59,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div className="relative bg-slate-900 border border-slate-800/80 rounded-2xl w-full max-w-md p-5 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-150">
         <button
           onClick={handleCancel}
-          className="absolute top-4 right-4 p-1 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-1 hover:bg-slate-850 rounded-lg text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
         >
           <X size={16} />
         </button>
@@ -94,7 +94,7 @@ export const Modal: React.FC<ModalProps> = ({
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="px-3 py-1.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                 >
                   Confirm
                 </button>
@@ -102,7 +102,7 @@ export const Modal: React.FC<ModalProps> = ({
             ) : (
               <button
                 onClick={handleConfirm}
-                className="px-4 py-1.5 bg-slate-950/50 hover:bg-slate-900 border border-slate-850 hover:border-slate-850 text-purple-400 hover:text-purple-300 font-bold rounded-lg text-xs transition-all cursor-pointer"
+                className="px-4 py-1.5 bg-slate-950/50 hover:bg-slate-900 border border-slate-850 hover:border-slate-850 text-primary-400 hover:text-primary-300 font-bold rounded-lg text-xs transition-all cursor-pointer"
               >
                 OK
               </button>
