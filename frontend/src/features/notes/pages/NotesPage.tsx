@@ -11,6 +11,12 @@ import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision'
 import { Modal } from '../../../components/ui/Modal';
 import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 
+const stripHtml = (html: string) => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
 export const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
@@ -314,7 +320,7 @@ export const NotesPage: React.FC = () => {
                     {note.title || 'Untitled'}
                   </h4>
                   <p className="text-xs text-slate-400 truncate">
-                    {note.content}
+                    {stripHtml(note.content)}
                   </p>
                   {(note.tags.length > 0 || note.topic) && (
                     <div className="flex flex-wrap gap-1 pt-1.5 items-center">

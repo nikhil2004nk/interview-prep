@@ -11,6 +11,7 @@ import { ArrowLeft, BookOpen, Trash2, Eye, FileText, HelpCircle, Target, LogOut 
 import { useAuth } from '../../auth/hooks/useAuth';
 import { Modal } from '../../../components/ui/Modal';
 import { Dropdown } from '../../../components/ui/Dropdown';
+import { RichTextEditor } from '../../../components/ui/RichTextEditor';
 import type { Topic } from '../../notes/api/notes';
 import { fetchTopicsApi } from '../../topics/api/topics';
 
@@ -298,10 +299,12 @@ export const RevisionPage: React.FC = () => {
                     <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">
                       {selectedRecord.itemType === RevisionItemType.NOTE ? 'Note content' : 'Question Prompt'}
                     </label>
-                    <div className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed max-h-56 overflow-y-auto scrollbar-thin">
-                      {selectedRecord.itemType === RevisionItemType.NOTE
-                        ? selectedRecord.item?.content
-                        : selectedRecord.item?.description}
+                    <div className="text-sm text-slate-300 leading-relaxed max-h-56 overflow-y-auto scrollbar-thin">
+                      {selectedRecord.itemType === RevisionItemType.NOTE ? (
+                        <RichTextEditor content={selectedRecord.item?.content || ''} onChange={() => {}} editable={false} />
+                      ) : (
+                        <div className="whitespace-pre-wrap">{selectedRecord.item?.description}</div>
+                      )}
                     </div>
                   </div>
                 ) : (
