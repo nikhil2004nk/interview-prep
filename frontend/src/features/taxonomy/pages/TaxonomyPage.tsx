@@ -6,7 +6,7 @@ import type { Topic, Tag } from '../../notes/api/notes';
 import { fetchTopicsPaginatedApi, createTopicApi, updateTopicApi, deleteTopicApi } from '../../topics/api/topics';
 import { fetchTagsPaginatedApi, createTagApi, updateTagApi, deleteTagApi } from '../../tags/api/tags';
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 export const TaxonomyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export const TaxonomyPage: React.FC = () => {
   // Data states
   const [topics, setTopics] = useState<Topic[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
-  
+
   const [topicsLoading, setTopicsLoading] = useState(true);
   const [tagsLoading, setTagsLoading] = useState(true);
 
@@ -374,9 +374,9 @@ export const TaxonomyPage: React.FC = () => {
       </header>
 
       {/* Main grids */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 overflow-y-auto">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 md:overflow-hidden overflow-y-auto">
         {/* TOPICS SECTION */}
-        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
+        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3 md:h-full md:overflow-hidden">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
               <BookOpen size={16} className="text-primary-400" />
@@ -413,7 +413,7 @@ export const TaxonomyPage: React.FC = () => {
           </div>
 
           {/* Topics List */}
-          <div className="space-y-1.5 pr-1 h-[280px] overflow-y-auto custom-scrollbar">
+          <div className="space-y-1.5 pr-1 flex-1 min-h-[300px] md:min-h-0 overflow-y-auto custom-scrollbar">
             {topicsLoading ? (
               <div className="text-center text-[11px] text-slate-500 py-4">Loading topics...</div>
             ) : topics.length === 0 ? (
@@ -517,7 +517,7 @@ export const TaxonomyPage: React.FC = () => {
         </section>
 
         {/* TAGS SECTION */}
-        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
+        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3 md:h-full md:overflow-hidden">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
               <TagIcon size={16} className="text-secondary-400" />
@@ -554,7 +554,7 @@ export const TaxonomyPage: React.FC = () => {
           </div>
 
           {/* Tags list */}
-          <div className="space-y-2 pr-1 h-[320px] overflow-y-auto custom-scrollbar">
+          <div className="space-y-2 pr-1 flex-1 min-h-[300px] md:min-h-0 overflow-y-auto custom-scrollbar">
             {tagsLoading ? (
               <div className="text-center text-xs text-slate-500 py-6">Loading tags...</div>
             ) : tags.length === 0 ? (
