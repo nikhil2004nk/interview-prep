@@ -58,7 +58,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
     }}
     disabled={disabled}
     title={title}
-    className={`p-1.5 rounded-lg transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+    className={`p-1 rounded-md transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
       isActive
         ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
         : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 border border-transparent'
@@ -189,7 +189,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     editorProps: {
       attributes: {
         class: 'rich-editor-content focus:outline-none',
-        style: 'min-height: 200px;',
+        style: 'min-height: 120px;',
       },
     },
   });
@@ -229,7 +229,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     <div className="flex-1 flex flex-col min-h-0 border border-slate-800/60 rounded-xl overflow-hidden bg-slate-950/30">
       {/* Toolbar */}
       {editable && (
-        <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-slate-800/60 bg-slate-900/40 shrink-0">
+        <div className="flex flex-wrap items-center gap-0.5 px-2 py-1 border-b border-slate-800/60 bg-slate-900/40 shrink-0">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
             isActive={editor.isActive('bold')}
@@ -325,7 +325,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
               onClick={() => { setShowTextColor(!showTextColor); setShowHighlight(false); }}
               title="Text Color"
-              className={`flex items-center gap-0.5 p-1.5 rounded-lg transition-all cursor-pointer border ${
+              className={`flex items-center gap-0.5 p-1 rounded-md transition-all cursor-pointer border ${
                 currentTextColor
                   ? 'border-purple-500/30 bg-purple-600/10'
                   : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/60'
@@ -358,7 +358,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
               onClick={() => { setShowHighlight(!showHighlight); setShowTextColor(false); }}
               title="Highlight"
-              className={`flex items-center gap-0.5 p-1.5 rounded-lg transition-all cursor-pointer border ${
+              className={`flex items-center gap-0.5 p-1 rounded-md transition-all cursor-pointer border ${
                 currentHighlight
                   ? 'border-purple-500/30 bg-purple-600/10'
                   : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/60'
@@ -404,7 +404,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       )}
 
       {/* Editor content area */}
-      <div className="flex-1 overflow-y-auto max-h-[calc(100vh-380px)] min-h-[200px] px-4 py-3 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto max-h-[calc(100vh-380px)] min-h-[120px] px-3 py-2 custom-scrollbar">
         <EditorContent editor={editor} />
       </div>
     </div>

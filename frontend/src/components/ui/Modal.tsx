@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
       ></div>
 
       {/* Modal Dialog */}
-      <div className="relative bg-slate-900 border border-slate-800/80 rounded-2xl w-full max-w-md p-6 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-150">
+      <div className="relative bg-slate-900 border border-slate-800/80 rounded-2xl w-full max-w-md p-5 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-150">
         <button
           onClick={handleCancel}
           className="absolute top-4 right-4 p-1 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
@@ -69,13 +69,13 @@ export const Modal: React.FC<ModalProps> = ({
             {getIcon()}
           </div>
           <div className="space-y-1.5 flex-1 min-w-0">
-            <h3 className="font-extrabold text-slate-100 text-sm md:text-base leading-snug">
+            <h3 className="font-extrabold text-slate-100 text-sm leading-snug">
               {title}
             </h3>
             {children ? (
               <div className="pt-2">{children}</div>
             ) : (
-              <p className="text-xs md:text-sm text-slate-400 leading-relaxed whitespace-pre-wrap">
+              <p className="text-xs text-slate-400 leading-relaxed whitespace-pre-wrap">
                 {message}
               </p>
             )}
@@ -83,18 +83,18 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {!children && (
-          <div className="mt-6 flex justify-end gap-2.5">
+          <div className="mt-5 flex justify-end gap-2">
             {type === 'confirm' ? (
               <>
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 bg-slate-950/50 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 font-semibold rounded-lg text-xs transition-all cursor-pointer"
+                  className="px-3 py-1.5 bg-slate-950/50 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 font-semibold rounded-lg text-xs transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                 >
                   Confirm
                 </button>
@@ -102,7 +102,7 @@ export const Modal: React.FC<ModalProps> = ({
             ) : (
               <button
                 onClick={handleConfirm}
-                className="px-5 py-2 bg-slate-950/50 hover:bg-slate-900 border border-slate-850 hover:border-slate-850 text-purple-400 hover:text-purple-300 font-bold rounded-lg text-xs transition-all cursor-pointer"
+                className="px-4 py-1.5 bg-slate-950/50 hover:bg-slate-900 border border-slate-850 hover:border-slate-850 text-purple-400 hover:text-purple-300 font-bold rounded-lg text-xs transition-all cursor-pointer"
               >
                 OK
               </button>

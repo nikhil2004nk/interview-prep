@@ -70,17 +70,17 @@ export const AuthPage: React.FC = () => {
   const isSubmitting = isLoginSubmitting || isRegisterSubmitting;
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 select-none relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-6 select-none relative overflow-hidden">
       {/* Background gradients */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-pink-600/10 rounded-full blur-3xl" />
 
-      <div className="max-w-md w-full bg-slate-900/60 border border-slate-800/80 backdrop-blur-2xl rounded-2xl p-8 shadow-2xl space-y-6 z-10 transition-all duration-300">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+      <div className="max-w-md w-full bg-slate-900/60 border border-slate-800/80 backdrop-blur-2xl rounded-2xl p-6 shadow-2xl space-y-4 z-10 transition-all duration-300">
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-400 text-xs">
             {isLogin ? 'Sign in to access your interview dashboard' : 'Join now to prepare and practice'}
           </p>
         </div>
@@ -92,17 +92,17 @@ export const AuthPage: React.FC = () => {
         )}
 
         {isLogin ? (
-          <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-4">
+          <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-3">
             <div className="space-y-1">
               <label className="text-xs font-semibold text-slate-400">Email Address</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-                  <Mail size={16} />
+                  <Mail size={14} />
                 </span>
                 <input
                   type="email"
                   disabled={isSubmitting}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors text-sm"
                   placeholder="name@example.com"
                   {...registerLogin('email')}
                 />
@@ -116,12 +116,12 @@ export const AuthPage: React.FC = () => {
               <label className="text-xs font-semibold text-slate-400">Password</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-                  <Lock size={16} />
+                  <Lock size={14} />
                 </span>
                 <input
                   type="password"
                   disabled={isSubmitting}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors text-sm"
                   placeholder="••••••••"
                   {...registerLogin('password')}
                 />
@@ -134,7 +134,7 @@ export const AuthPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {isSubmitting ? (
                 <>
@@ -147,18 +147,18 @@ export const AuthPage: React.FC = () => {
             </button>
           </form>
         ) : (
-          <form onSubmit={handleRegisterSubmit(onRegisterSubmit)} className="space-y-4">
+          <form onSubmit={handleRegisterSubmit(onRegisterSubmit)} className="space-y-3">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400">Your Name (Optional)</label>
+              <label className="text-xs font-semibold text-slate-400">Full Name</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-                  <UserIcon size={16} />
+                  <UserIcon size={14} />
                 </span>
                 <input
                   type="text"
                   disabled={isSubmitting}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
-                  placeholder="John Doe"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors text-sm"
+                  placeholder="John Doe (Optional)"
                   {...registerRegister('name')}
                 />
               </div>
@@ -171,12 +171,12 @@ export const AuthPage: React.FC = () => {
               <label className="text-xs font-semibold text-slate-400">Email Address</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-                  <Mail size={16} />
+                  <Mail size={14} />
                 </span>
                 <input
                   type="email"
                   disabled={isSubmitting}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors text-sm"
                   placeholder="name@example.com"
                   {...registerRegister('email')}
                 />
@@ -190,12 +190,12 @@ export const AuthPage: React.FC = () => {
               <label className="text-xs font-semibold text-slate-400">Password</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-                  <Lock size={16} />
+                  <Lock size={14} />
                 </span>
                 <input
                   type="password"
                   disabled={isSubmitting}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950/50 border border-slate-800 focus:border-purple-500 rounded-lg text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors text-sm"
                   placeholder="••••••••"
                   {...registerRegister('password')}
                 />
@@ -208,7 +208,7 @@ export const AuthPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-purple-500/20 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {isSubmitting ? (
                 <>

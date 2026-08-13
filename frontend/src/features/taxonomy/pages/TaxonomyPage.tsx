@@ -374,12 +374,12 @@ export const TaxonomyPage: React.FC = () => {
       </header>
 
       {/* Main grids */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0 overflow-y-auto">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 overflow-y-auto">
         {/* TOPICS SECTION */}
-        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-6 rounded-2xl space-y-4">
+        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
-              <BookOpen size={18} className="text-purple-400" />
+            <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+              <BookOpen size={16} className="text-purple-400" />
               Topics ({totalTopics})
             </h2>
             <button
@@ -392,37 +392,37 @@ export const TaxonomyPage: React.FC = () => {
 
           {/* Search topics */}
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
-              <Search size={14} />
+            <span className="absolute inset-y-0 left-0 pl-2 flex items-center text-slate-500">
+              <Search size={12} />
             </span>
             <input
               type="text"
-              placeholder="Search topics (min 3 chars)..."
+              placeholder="Search topics..."
               value={topicSearch}
               onChange={e => setTopicSearch(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-7 pr-7 py-1 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {topicSearch && (
               <button
                 onClick={() => setTopicSearch('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-355 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-500 hover:text-slate-355 cursor-pointer"
               >
-                <X size={14} />
+                <X size={12} />
               </button>
             )}
           </div>
 
           {/* Topics List */}
-          <div className="space-y-2 pr-1 h-[320px] overflow-y-auto custom-scrollbar">
+          <div className="space-y-1.5 pr-1 h-[280px] overflow-y-auto custom-scrollbar">
             {topicsLoading ? (
-              <div className="text-center text-xs text-slate-500 py-6">Loading topics...</div>
+              <div className="text-center text-[11px] text-slate-500 py-4">Loading topics...</div>
             ) : topics.length === 0 ? (
-              <div className="text-center text-xs text-slate-500 py-6">No topics found</div>
+              <div className="text-center text-[11px] text-slate-500 py-4">No topics found</div>
             ) : (
               topics.map(t => (
                 <div
                   key={t.id}
-                  className="p-4 bg-slate-950/30 border border-slate-855/60 hover:border-slate-800 rounded-xl flex flex-col gap-2 transition-all"
+                  className="p-2.5 bg-slate-950/30 border border-slate-855/60 hover:border-slate-800 rounded-lg flex flex-col gap-1 transition-all"
                 >
                   {editingTopicId === t.id ? (
                     <div className="space-y-3">
@@ -517,10 +517,10 @@ export const TaxonomyPage: React.FC = () => {
         </section>
 
         {/* TAGS SECTION */}
-        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-6 rounded-2xl space-y-4">
+        <section className="flex flex-col bg-slate-900/30 border border-slate-900 p-4 rounded-xl space-y-3">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
-              <TagIcon size={18} className="text-pink-400" />
+            <h2 className="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+              <TagIcon size={16} className="text-pink-400" />
               Tags ({totalTags})
             </h2>
             <button

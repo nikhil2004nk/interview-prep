@@ -161,7 +161,7 @@ export const GoalsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
       {/* Sidebar List */}
-      <div className="w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex flex-col h-auto md:h-screen">
+      <div className={`w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex-col h-screen md:h-screen ${selectedGoal || showAddForm ? 'hidden md:flex' : 'flex'}`}>
         {/* Header / Brand */}
         <div className="p-4 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/60">
           <div className="flex items-center gap-2">
@@ -321,12 +321,17 @@ export const GoalsPage: React.FC = () => {
       </div>
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col h-screen bg-slate-950 overflow-y-auto">
+      <div className={`flex-1 flex-col h-screen bg-slate-950 overflow-y-auto ${selectedGoal || showAddForm ? 'flex' : 'hidden md:flex'}`}>
         {showAddForm ? (
           <div className="max-w-2xl w-full mx-auto p-6 space-y-6">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-              Set Interview Target Goal
-            </h2>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setShowAddForm(false)} className="md:hidden p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <ArrowLeft size={18} />
+              </button>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                Set Interview Target Goal
+              </h2>
+            </div>
             <div className="space-y-4 bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-400">Goal Description</label>
@@ -395,6 +400,9 @@ export const GoalsPage: React.FC = () => {
           </div>
         ) : selectedGoal ? (
           <div className="flex-1 flex flex-col p-6 space-y-6 max-w-3xl w-full mx-auto">
+            <button onClick={() => setSelectedGoal(null)} className="md:hidden self-start flex items-center gap-2 text-slate-400 hover:text-slate-200 bg-slate-900/50 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-800">
+              <ArrowLeft size={14} /> Back to Goals
+            </button>
             {/* Completion metrics board */}
             <div className="bg-slate-900/35 border border-slate-800/80 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 justify-between">
               <div className="space-y-1.5 text-center md:text-left">

@@ -111,7 +111,7 @@ export const RevisionPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
       {/* Sidebar List */}
-      <div className="w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex flex-col h-auto md:h-screen">
+      <div className={`w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex-col h-screen md:h-screen ${selectedRecord ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
         <div className="p-4 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/60">
           <div className="flex items-center gap-2">
@@ -242,7 +242,7 @@ export const RevisionPage: React.FC = () => {
       </div>
 
       {/* Main Flashcard player */}
-      <div className="flex-1 flex flex-col h-screen bg-slate-950 overflow-y-auto">
+      <div className={`flex-1 flex-col h-screen bg-slate-950 overflow-y-auto ${selectedRecord ? 'flex' : 'hidden md:flex'}`}>
         {selectedRecord ? (
           <div className="flex-1 flex flex-col p-6 max-w-2xl w-full mx-auto justify-center space-y-6">
             {/* Flashcard Frame */}
@@ -253,6 +253,12 @@ export const RevisionPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setSelectedRecord(null)}
+                      className="md:hidden p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                    >
+                      <ArrowLeft size={14} />
+                    </button>
                     <span className={`text-[10px] px-2.5 py-0.5 rounded font-black uppercase ${
                       selectedRecord.itemType === RevisionItemType.NOTE
                         ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25'

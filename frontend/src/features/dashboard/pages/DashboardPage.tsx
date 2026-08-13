@@ -75,14 +75,14 @@ export const DashboardPage: React.FC = () => {
       </header>
 
       {/* Hero Welcome banner */}
-      <main className="max-w-5xl w-full mx-auto p-6 space-y-8 flex-1">
-        <div className="relative rounded-3xl border border-slate-850 p-6 md:p-8 bg-gradient-to-r from-purple-900/10 via-pink-900/5 to-slate-950 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+      <main className="max-w-5xl w-full mx-auto p-4 md:p-6 space-y-6 flex-1">
+        <div className="relative rounded-2xl border border-slate-850 p-5 md:p-6 bg-gradient-to-r from-purple-900/10 via-pink-900/5 to-slate-950 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-5">
           <div className="absolute -top-10 -left-10 w-44 h-44 rounded-full bg-purple-600/5 filter blur-3xl"></div>
           <div className="absolute -bottom-10 -right-10 w-44 h-44 rounded-full bg-pink-600/5 filter blur-3xl"></div>
           
           <div className="space-y-2 text-center md:text-left z-10">
-            <h1 className="text-xl md:text-3xl font-extrabold flex items-center justify-center md:justify-start gap-2">
-              <Sparkles className="text-amber-400" size={24} />
+            <h1 className="text-lg md:text-xl font-extrabold flex items-center justify-center md:justify-start gap-2">
+              <Sparkles className="text-amber-400" size={20} />
               Welcome Back, {user?.name?.split(' ')[0] || 'Prepmaster'}!
             </h1>
             <p className="text-xs md:text-sm text-slate-400 max-w-lg leading-relaxed">
@@ -92,14 +92,14 @@ export const DashboardPage: React.FC = () => {
           <div className="flex gap-3 z-10 shrink-0">
             <button
               onClick={() => navigate('/taxonomy')}
-              className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-350 hover:text-slate-200 border border-slate-800 font-bold rounded-xl text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-350 hover:text-slate-200 border border-slate-800 font-bold rounded-lg text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
               <TagIcon size={14} className="text-pink-400" />
               Manage Tags & Topics
             </button>
             <button
               onClick={() => navigate('/revision')}
-              className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/10 text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-lg shadow-lg shadow-purple-500/10 text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
               <BookOpen size={14} />
               Start Reviewing
@@ -108,174 +108,162 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Analytics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Notes Stats */}
           <div
             onClick={() => navigate('/notes')}
-            className="p-5 rounded-2xl border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-36"
+            className="p-3 rounded-lg border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-24"
           >
             <div className="flex justify-between items-center">
-              <span className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
-                <FileText size={16} />
+              <span className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <FileText size={14} />
               </span>
-              <ArrowRight size={14} className="text-slate-600 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
+              <ArrowRight size={12} className="text-slate-600 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
             </div>
-            <div className="space-y-1">
-              <span className="text-2xl font-black text-slate-200 block">{metrics.notesCount}</span>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Notes Written</span>
+            <div className="space-y-0.5">
+              <span className="text-lg font-black text-slate-200 block">{metrics.notesCount}</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Notes Written</span>
             </div>
           </div>
 
           {/* Question Stats */}
           <div
             onClick={() => navigate('/questions')}
-            className="p-5 rounded-2xl border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-36"
+            className="p-3 rounded-lg border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-24"
           >
             <div className="flex justify-between items-center">
-              <span className="w-8 h-8 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-400">
-                <ClipboardCheck size={16} />
+              <span className="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400">
+                <ClipboardCheck size={14} />
               </span>
-              <ArrowRight size={14} className="text-slate-600 group-hover:text-pink-400 group-hover:translate-x-1 transition-all" />
+              <ArrowRight size={12} className="text-slate-600 group-hover:text-pink-400 group-hover:translate-x-1 transition-all" />
             </div>
-            <div className="space-y-1">
-              <span className="text-2xl font-black text-slate-200 block">{metrics.questionsPracticedCount}</span>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Questions Practiced</span>
+            <div className="space-y-0.5">
+              <span className="text-lg font-black text-slate-200 block">{metrics.questionsPracticedCount}</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Questions Practiced</span>
             </div>
           </div>
 
           {/* Average AI Score */}
           <div
             onClick={() => navigate('/questions')}
-            className="p-5 rounded-2xl border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-36"
+            className="p-3 rounded-lg border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-24"
           >
             <div className="flex justify-between items-center">
-              <span className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
-                <Award size={16} />
+              <span className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
+                <Award size={14} />
               </span>
-              <ArrowRight size={14} className="text-slate-600 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+              <ArrowRight size={12} className="text-slate-600 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
             </div>
-            <div className="space-y-1">
-              <span className="text-2xl font-black text-slate-200 block">
+            <div className="space-y-0.5">
+              <span className="text-lg font-black text-slate-200 block">
                 {metrics.averageScore}%
               </span>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">AI Evaluation Avg</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">AI Evaluation Avg</span>
             </div>
           </div>
 
           {/* Flashcards Due */}
           <div
             onClick={() => navigate('/revision')}
-            className="p-5 rounded-2xl border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-36"
+            className="p-3 rounded-lg border border-slate-850 bg-slate-900/15 hover:bg-slate-900/30 hover:border-slate-750 transition-all cursor-pointer group flex flex-col justify-between h-24"
           >
             <div className="flex justify-between items-center">
-              <span className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                <BookOpen size={16} />
+              <span className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <BookOpen size={14} />
               </span>
-              <ArrowRight size={14} className="text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+              <ArrowRight size={12} className="text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
             </div>
-            <div className="space-y-1">
-              <span className="text-2xl font-black text-slate-200 block">{metrics.revisionDueCount}</span>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Reviews Due Today</span>
+            <div className="space-y-0.5">
+              <span className="text-lg font-black text-slate-200 block">{metrics.revisionDueCount}</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Reviews Due Today</span>
             </div>
           </div>
         </div>
 
         {/* Step-by-Step Study Journey */}
-        <div className="space-y-4 pt-2">
-          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+        <div className="space-y-3 pt-2">
+          <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
             🚀 Your Prep Journey
           </h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {/* Step 1: Notes */}
             <div
               onClick={() => navigate('/notes')}
-              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+              className="relative p-3 rounded-xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-36"
             >
-              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-purple-400">01</div>
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold text-purple-450 uppercase tracking-widest block">Step 1: Concepts</span>
-                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-purple-300 transition-colors">Write Study Notes</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Draft syntax examples, key questions, and architectural logs. Keep your library updated.
+              <div className="absolute top-3 right-3 text-[10px] font-bold text-slate-700 group-hover:text-purple-400">01</div>
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold text-purple-450 uppercase tracking-widest block">Step 1: Concepts</span>
+                <h3 className="text-xs font-extrabold text-slate-200 group-hover:text-purple-300 transition-colors">Write Notes</h3>
+                <p className="text-[10px] text-slate-500 leading-tight line-clamp-3">
+                  Draft syntax examples, key questions, and architectural logs.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-350 flex items-center gap-1">
-                Go to Notes <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-              </span>
             </div>
 
             {/* Step 2: Goals */}
             <div
               onClick={() => navigate('/goals')}
-              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+              className="relative p-3 rounded-xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-36"
             >
-              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-pink-400">02</div>
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold text-pink-450 uppercase tracking-widest block">Step 2: Milestones</span>
-                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-pink-300 transition-colors">Set Study Goals</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Establish custom milestone deadlines and link target study topics to stay focused.
+              <div className="absolute top-3 right-3 text-[10px] font-bold text-slate-700 group-hover:text-pink-400">02</div>
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold text-pink-450 uppercase tracking-widest block">Step 2: Milestones</span>
+                <h3 className="text-xs font-extrabold text-slate-200 group-hover:text-pink-300 transition-colors">Set Goals</h3>
+                <p className="text-[10px] text-slate-500 leading-tight line-clamp-3">
+                  Establish milestone deadlines and link target study topics.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-355 flex items-center gap-1">
-                Go to Goals <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-              </span>
             </div>
 
             {/* Step 3: Practice */}
             <div
               onClick={() => navigate('/questions')}
-              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+              className="relative p-3 rounded-xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-36"
             >
-              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-amber-400">03</div>
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold text-amber-450 uppercase tracking-widest block">Step 3: Verification</span>
-                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-amber-300 transition-colors">Practice & AI Check</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Attempt coding challenges, draft answers, and get real-time scores and keyword critiques from AI.
+              <div className="absolute top-3 right-3 text-[10px] font-bold text-slate-700 group-hover:text-amber-400">03</div>
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold text-amber-450 uppercase tracking-widest block">Step 3: Verification</span>
+                <h3 className="text-xs font-extrabold text-slate-200 group-hover:text-amber-300 transition-colors">AI Practice</h3>
+                <p className="text-[10px] text-slate-500 leading-tight line-clamp-3">
+                  Get real-time scores and keyword critiques from our AI.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-360 flex items-center gap-1">
-                Go to Practice <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-              </span>
             </div>
 
             {/* Step 4: Spaced Repetition */}
             <div
               onClick={() => navigate('/revision')}
-              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+              className="relative p-3 rounded-xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-36"
             >
-              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-blue-400">04</div>
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold text-blue-450 uppercase tracking-widest block">Step 4: Retention</span>
-                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-blue-300 transition-colors">Spaced Repetition</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Queue cards and run review sessions using the SM-2 algorithm to enforce absolute retention.
+              <div className="absolute top-3 right-3 text-[10px] font-bold text-slate-700 group-hover:text-blue-400">04</div>
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold text-blue-450 uppercase tracking-widest block">Step 4: Retention</span>
+                <h3 className="text-xs font-extrabold text-slate-200 group-hover:text-blue-300 transition-colors">Revision</h3>
+                <p className="text-[10px] text-slate-500 leading-tight line-clamp-3">
+                  Queue cards and run review sessions using SM-2 algorithm.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-365 flex items-center gap-1">
-                Go to Revision <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-              </span>
             </div>
           </div>
         </div>
 
         {/* Targets & Goals status progress block */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Goals Milestone Tracker */}
           <div
             onClick={() => navigate('/goals')}
-            className="border border-slate-850 rounded-2xl p-6 bg-slate-900/10 space-y-6 hover:border-slate-800 transition-all cursor-pointer group"
+            className="border border-slate-850 rounded-xl p-5 bg-slate-900/10 space-y-4 hover:border-slate-800 transition-all cursor-pointer group"
           >
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
-                  <Target size={16} />
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                  <Target size={14} />
                 </span>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-350">Study Milestones</h3>
-                  <span className="text-[10px] text-slate-500 font-medium">Link topics and complete goals</span>
+                  <h3 className="text-xs font-bold text-slate-350">Study Milestones</h3>
+                  <span className="text-[9px] text-slate-500 font-medium">Link topics and complete goals</span>
                 </div>
               </div>
               <span className="text-xs font-black text-purple-400 bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/15">

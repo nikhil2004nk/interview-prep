@@ -4,7 +4,7 @@ import { fetchNotesApi, createNoteApi, updateNoteApi, deleteNoteApi } from '../a
 import type { Note, Topic, Tag } from '../api/notes';
 import { fetchTopicsApi, createTopicApi } from '../../topics/api/topics';
 import { fetchTagsApi } from '../../tags/api/tags';
-import { Search, Plus, Trash2, Save, FileText, Tag as TagIcon, LogOut, Loader2, HelpCircle, Target, BookOpen, LayoutGrid, X } from 'lucide-react';
+import { Search, Plus, Trash2, Save, FileText, Tag as TagIcon, LogOut, Loader2, HelpCircle, Target, BookOpen, LayoutGrid, X, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { Dropdown } from '../../../components/ui/Dropdown';
 import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision';
@@ -190,7 +190,7 @@ export const NotesPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
       {/* Sidebar List */}
-      <div className="w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex flex-col h-auto md:h-screen">
+      <div className={`w-full md:w-80 bg-slate-900/40 border-r border-slate-800/80 flex-col h-screen md:h-screen ${selectedNote || isEditing ? 'hidden md:flex' : 'flex'}`}>
         {/* Header / Brand */}
         <div className="p-4 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/60">
           <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export const NotesPage: React.FC = () => {
               placeholder="Search title, tags..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-1.5 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
@@ -303,9 +303,9 @@ export const NotesPage: React.FC = () => {
               <div
                 key={note.id}
                 onClick={() => selectNote(note)}
-                className={`p-3.5 rounded-xl border transition-all cursor-pointer group flex justify-between items-start ${
+                className={`p-2.5 rounded-lg border transition-all cursor-pointer group flex justify-between items-start ${
                   selectedNote?.id === note.id
-                    ? 'bg-purple-600/10 border-purple-500/50 shadow-lg'
+                    ? 'bg-purple-600/10 border-purple-500/50 shadow-md'
                     : 'bg-transparent border-transparent hover:bg-slate-900/30 hover:border-slate-800/40'
                 }`}
               >
@@ -346,51 +346,41 @@ export const NotesPage: React.FC = () => {
         </div>
 
         {/* Floating actions */}
-        <div className="p-4 border-t border-slate-800/80 bg-slate-900/20">
+        <div className="p-2 border-t border-slate-800/80 bg-slate-900/20">
           <button
             onClick={handleNewNote}
-            className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 text-sm"
+            className="w-full py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg shadow flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 text-[11px]"
           >
-            <Plus size={16} />
+            <Plus size={12} />
             Create Note
           </button>
         </div>
       </div>
 
       {/* Editor / Details view */}
-      <div className="flex-1 flex flex-col h-screen bg-slate-950 relative">
+      <div className={`flex-1 flex-col h-screen bg-slate-950 relative ${selectedNote || isEditing ? 'flex' : 'hidden md:flex'}`}>
         {selectedNote || isEditing ? (
-          <div className="flex-1 flex flex-col p-6 space-y-4 overflow-y-auto">
+          <div className="flex-1 flex flex-col p-3 space-y-2 overflow-y-auto">
             {/* Top Bar actions */}
-            <div className="flex justify-between items-center border-b border-slate-900/60 pb-4">
-              <div className="flex items-center gap-3">
-                <FileText size={18} className="text-purple-400" />
-                <span className="text-xs text-slate-500 font-semibold tracking-wide uppercase">
+            <div className="flex justify-between items-center border-b border-slate-900/60 pb-2">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setSelectedNote(null);
+                    setIsEditing(false);
+                  }}
+                  className="md:hidden p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <ArrowLeft size={14} />
+                </button>
+                <FileText size={14} className="text-purple-400" />
+                <span className="text-[10px] text-slate-500 font-semibold tracking-wide uppercase">
                   {selectedNote ? 'Note Workspace' : 'Drafting Note'}
                 </span>
-                {isEditing ? (
-                  hasChanges ? (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium flex items-center gap-1 animate-pulse">
-                      <span className="w-1 h-1 rounded-full bg-amber-400"></span> Unsaved changes
-                    </span>
-                  ) : (
-                    selectedNote && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Saved
-                      </span>
-                    )
-                  )
-                ) : (
-                  selectedNote && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Saved
-                    </span>
-                  )
-                )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                  {!isEditing && selectedNote ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={async () => {
                         try {
@@ -398,22 +388,22 @@ export const NotesPage: React.FC = () => {
                           setModal({
                             isOpen: true,
                             title: 'Success',
-                            message: 'Note successfully added to your spaced repetition revision deck!',
+                            message: 'Note added to deck!',
                             type: 'success',
                           });
                         } catch (error: any) {
                           setModal({
                             isOpen: true,
                             title: 'Failed',
-                            message: error.message || 'Failed to add note to revision deck.',
+                            message: error.message || 'Error.',
                             type: 'error',
                           });
                         }
                       }}
-                      className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded-lg text-xs transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1.5"
+                      className="px-2 py-1 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded text-[10px] transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1"
                     >
-                      <BookOpen size={12} />
-                      Queue Revision
+                      <BookOpen size={10} />
+                      Revision
                     </button>
                     <button
                       onClick={() => {
@@ -424,13 +414,13 @@ export const NotesPage: React.FC = () => {
                         setTopicId('');
                         setIsEditing(false);
                       }}
-                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold rounded-lg text-xs transition-colors border border-slate-800/80 cursor-pointer"
+                      className="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold rounded text-[10px] transition-colors border border-slate-800/80 cursor-pointer"
                     >
                       Close
                     </button>
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-lg text-xs transition-colors cursor-pointer border border-slate-800/80"
+                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-lg text-xs transition-colors cursor-pointer border border-slate-800/80"
                     >
                       Edit Note
                     </button>
