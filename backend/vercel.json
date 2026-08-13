@@ -1,11 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/main.ts",
-      "use": "@vercel/node"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -20,7 +13,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "src/main.ts"
+      "destination": "/api/index"
     }
   ]
 }
