@@ -9,27 +9,42 @@ const server = express();
 let initialized = false;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-  
-  app.use(cookieParser());
-  
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
+  console.log('[Bootstrap] Starting application initialization...');
+  try {
+    const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+    console.log('[Bootstrap] NestFactory created successfully');
+    
+    app.use(cookieParser());
+    
+    app.enableCors({
+      origin: true,
+      credentials: true,
+    });
+    console.log('[Bootstrap] CORS configured');
 
-  await app.init();
-  initialized = true;
-  
-  // Only listen on a port if not running in a serverless environment (like Vercel)
-  if (!process.env.VERCEL) {
-    const configService = app.get(ConfigService);
-    const port = configService.get<number>('PORT') || 3000;
-    await app.listen(port);
+    await app.init();
+    console.log('[Bootstrap] app.init() successful');
+    initialized = true;
+    
+    // Only listen on a port if not running in a serverless environment (like Vercel)
+    if (!process.env.VERCEL) {
+      console.log('[Bootstrap] Local environment detected, binding to port...');
+      const configService = app.get(ConfigService);
+      const port = configService.get<number>('PORT') || 3000;
+      await app.listen(port);
+      console.log(`[Bootstrap] Listening on port ${port}`);
+    } else {
+      console.log('[Bootstrap] Vercel environment detected, skipping app.listen()');
+    }
+    
+    console.log('[Bootstrap] Initialization complete.');
+  } catch (error) {
+    console.error('[Bootstrap] CRITICAL ERROR during initialization:', error);
+    throw error; // Re-throw to be caught by the serverless handler
   }
 }
 
-const bootstrapPromise = bootstrap();
+let bootstrapPromise: Promise<void> | null = null;
 
 export default async (req: any, res: any) => {
   // Always set CORS headers for all requests in Vercel to avoid missing headers on 500
@@ -44,6 +59,9 @@ export default async (req: any, res: any) => {
 
   try {
     if (!initialized) {
+      if (!bootstrapPromise) {
+        bootstrapPromise = bootstrap();
+      }
       await bootstrapPromise;
     }
     server(req, res);
