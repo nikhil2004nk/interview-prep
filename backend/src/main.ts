@@ -32,18 +32,24 @@ async function bootstrap() {
 const bootstrapPromise = bootstrap();
 
 export default async (req: any, res: any) => {
+  // Always set CORS headers for all requests in Vercel to avoid missing headers on 500
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
   if (req.method === 'OPTIONS') {
-    // Explicitly handle preflight in Vercel to avoid cold start timeouts or missing headers
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
     return res.status(200).end();
   }
 
-  if (!initialized) {
-    await bootstrapPromise;
+  try {
+    if (!initialized) {
+      await bootstrapPromise;
+    }
+    server(req, res);
+  } catch (err: any) {
+    console.error('Bootstrap error:', err);
+    res.status(500).json({ error: 'Initialization error', message: err.message, stack: err.stack });
   }
-  server(req, res);
 };
 
