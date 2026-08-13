@@ -6,6 +6,7 @@ import { NotesPage } from '../features/notes/pages/NotesPage';
 import { QuestionsPage } from '../features/questions/pages/QuestionsPage';
 import { GoalsPage } from '../features/goals/pages/GoalsPage';
 import { RevisionPage } from '../features/revision/pages/RevisionPage';
+import { DashboardPage } from '../features/dashboard/pages/DashboardPage';
 
 const AuthGuard: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -50,6 +51,10 @@ export const routes = [
     children: [
       {
         path: '/',
+        element: <DashboardPage />,
+      },
+      {
+        path: '/notes',
         element: <NotesPage />,
       },
       {

@@ -153,7 +153,7 @@ export const QuestionsPage: React.FC = () => {
             <button
               onClick={() => navigate('/')}
               className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Back to Notes"
+              title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>

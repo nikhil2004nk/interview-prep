@@ -4,7 +4,7 @@ import { fetchNotesApi, createNoteApi, updateNoteApi, deleteNoteApi } from '../a
 import type { Note, Topic, Tag } from '../api/notes';
 import { fetchTopicsApi, createTopicApi } from '../../topics/api/topics';
 import { fetchTagsApi } from '../../tags/api/tags';
-import { Search, Plus, Trash2, Save, FileText, Tag as TagIcon, LogOut, Loader2, HelpCircle, Target, BookOpen } from 'lucide-react';
+import { Search, Plus, Trash2, Save, FileText, Tag as TagIcon, LogOut, Loader2, HelpCircle, Target, BookOpen, LayoutGrid } from 'lucide-react';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { Dropdown } from '../../../components/ui/Dropdown';
 import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision';
@@ -171,6 +171,13 @@ export const NotesPage: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/')}
+              title="Dashboard"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <LayoutGrid size={16} />
+            </button>
             <button
               onClick={() => navigate('/questions')}
               title="Practice Center"

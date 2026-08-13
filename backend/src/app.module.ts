@@ -50,6 +50,7 @@ import { RevisionModule } from './revision/revision.module';
     TagsModule,
     GoalsModule,
     RevisionModule,
+    TypeOrmModule.forFeature([Note, Answer, Goal, RevisionRecord]),
   ],
   controllers: [AppController],
   providers: [AppService],
