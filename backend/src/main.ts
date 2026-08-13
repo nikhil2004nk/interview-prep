@@ -13,12 +13,8 @@ async function bootstrap() {
   
   app.use(cookieParser());
   
-  const configService = app.get(ConfigService);
-  const frontendUrl = configService.get<string>('FRONTEND_URL');
-  const allowedOrigins = frontendUrl ? frontendUrl.split(',') : ['http://localhost:5173', 'http://localhost:5174'];
-
   app.enableCors({
-    origin: allowedOrigins,
+    origin: true,
     credentials: true,
   });
 
@@ -27,6 +23,7 @@ async function bootstrap() {
   
   // Only listen on a port if not running in a serverless environment (like Vercel)
   if (!process.env.VERCEL) {
+    const configService = app.get(ConfigService);
     const port = configService.get<number>('PORT') || 3000;
     await app.listen(port);
   }
@@ -35,6 +32,15 @@ async function bootstrap() {
 const bootstrapPromise = bootstrap();
 
 export default async (req: any, res: any) => {
+  if (req.method === 'OPTIONS') {
+    // Explicitly handle preflight in Vercel to avoid cold start timeouts or missing headers
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    return res.status(200).end();
+  }
+
   if (!initialized) {
     await bootstrapPromise;
   }
