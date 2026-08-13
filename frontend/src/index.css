@@ -399,3 +399,29 @@
   --theme-secondary-400: var(--color-rose-600);
   --theme-secondary-450: color-mix(in oklch, var(--color-rose-500) 50%, var(--color-rose-600));
 }
+
+
+/* Custom Scrollbar for all elements */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--theme-slate-700);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-primary-500);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-slate-700) transparent;
+}
