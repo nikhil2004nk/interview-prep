@@ -4,15 +4,17 @@ import {
   fetchQuestionsApi,
   createQuestionApi,
   submitAnswerApi,
-  fetchQuestionPracticesApi
+  fetchQuestionPracticesApi,
+  deleteQuestionApi
 } from '../api/questions';
 import type { Question, Answer, Difficulty } from '../api/questions';
 import type { Topic, Tag } from '../../notes/api/notes';
 import { fetchTopicsApi, createTopicApi } from '../../topics/api/topics';
 import { fetchTagsApi } from '../../tags/api/tags';
-import { Search, Plus, Save, BookOpen, MessageSquare, Loader2, ArrowLeft, CheckCircle, Target } from 'lucide-react';
+import { Search, Plus, Save, BookOpen, MessageSquare, Loader2, ArrowLeft, CheckCircle, Target, Trash2, X } from 'lucide-react';
 import { Dropdown } from '../../../components/ui/Dropdown';
 import { addToRevisionApi, RevisionItemType } from '../../revision/api/revision';
+import { Modal } from '../../../components/ui/Modal';
 
 export const QuestionsPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -21,16 +23,27 @@ export const QuestionsPage: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [newTopicId, setNewTopicId] = useState('');
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'confirm' | 'error' | 'success';
+    onConfirm?: () => void;
+  }>({ isOpen: false, title: '', message: '', type: 'info' });
   const [selectedTopicFilter, setSelectedTopicFilter] = useState('');
   const [selectedTagFilter, setSelectedTagFilter] = useState('');
+  const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   
   // Custom Question Form
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newDifficulty, setNewDifficulty] = useState<Difficulty>('MEDIUM');
-  const [newTags, setNewTags] = useState('');
+  const [newTagInput, setNewTagInput] = useState('');
+  const [newTagsList, setNewTagsList] = useState<string[]>([]);
+  const [topicSearch, setTopicSearch] = useState('');
 
   // Answer Practicing Form
   const [userAnswer, setUserAnswer] = useState('');
@@ -50,9 +63,6 @@ export const QuestionsPage: React.FC = () => {
       setQuestions(questionsData);
       setTopics(topicsData);
       setTags(tagsData);
-      if (questionsData.length > 0 && !selectedQuestion) {
-        selectQuestion(questionsData[0]);
-      }
     } catch (error) {
       console.error('Failed to load questions', error);
     }
@@ -61,6 +71,15 @@ export const QuestionsPage: React.FC = () => {
   useEffect(() => {
     loadQuestions();
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQuery.trim().length >= 3 || searchQuery.trim().length === 0) {
+        setDebouncedSearchQuery(searchQuery);
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   const selectQuestion = async (q: Question) => {
     setSelectedQuestion(q);
@@ -78,7 +97,7 @@ export const QuestionsPage: React.FC = () => {
 
   const handleCreateQuestion = async () => {
     if (!newTitle.trim()) return;
-    const tagNames = newTags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    const tagNames = newTagsList;
     try {
       const created = await createQuestionApi({
         title: newTitle,
@@ -91,7 +110,7 @@ export const QuestionsPage: React.FC = () => {
       selectQuestion(created);
       setNewTitle('');
       setNewDesc('');
-      setNewTags('');
+      setNewTagsList([]);
       setNewTopicId('');
       setShowAddForm(false);
 
@@ -121,15 +140,17 @@ export const QuestionsPage: React.FC = () => {
   };
 
   const filteredQuestions = questions.filter(q => {
-    const matchesSearch =
-      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (q.description && q.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      q.tags.some(tag => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    const matchesSearch = !query ||
+      q.title.toLowerCase().includes(query) ||
+      (q.description && q.description.toLowerCase().includes(query)) ||
+      q.tags.some(tag => tag.name.toLowerCase().includes(query));
 
     const matchesTopic = !selectedTopicFilter || q.topic?.id === selectedTopicFilter;
     const matchesTag = !selectedTagFilter || q.tags.some(tag => tag.id === selectedTagFilter);
+    const matchesDifficulty = !selectedDifficultyFilter || q.difficulty === selectedDifficultyFilter;
 
-    return matchesSearch && matchesTopic && matchesTag;
+    return matchesSearch && matchesTopic && matchesTag && matchesDifficulty;
   });
 
   const getDifficultyColor = (diff: Difficulty) => {
@@ -190,8 +211,17 @@ export const QuestionsPage: React.FC = () => {
               placeholder="Search questions..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-350 cursor-pointer"
+                title="Clear Search"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
         </div>
 
@@ -215,6 +245,18 @@ export const QuestionsPage: React.FC = () => {
               ...tags.map(t => ({ value: t.id, label: `#${t.name}` })),
             ]}
             placeholder="All Tags"
+          />
+
+          <Dropdown
+            value={selectedDifficultyFilter}
+            onChange={setSelectedDifficultyFilter}
+            options={[
+              { value: '', label: 'All Difficulties' },
+              { value: 'EASY', label: 'Easy' },
+              { value: 'MEDIUM', label: 'Medium' },
+              { value: 'HARD', label: 'Hard' },
+            ]}
+            placeholder="All Difficulties"
           />
         </div>
 
@@ -307,38 +349,85 @@ export const QuestionsPage: React.FC = () => {
                 />
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1 relative">
                 <label className="text-xs font-semibold text-slate-400">Topic</label>
-                <div className="flex gap-2">
-                  <Dropdown
-                    value={newTopicId}
-                    onChange={setNewTopicId}
-                    options={[
-                      { value: '', label: 'Select Topic (Optional)' },
-                      ...topics.map(t => ({ value: t.id, label: t.name })),
-                    ]}
-                    placeholder="Select Topic"
-                    className="flex-1"
-                  />
-                  <button
-                    onClick={async () => {
-                      const name = window.prompt("Enter new Topic name:");
-                      if (!name || !name.trim()) return;
-                      try {
-                        const created = await createTopicApi(name.trim());
-                        setTopics(prev => [...prev, created]);
-                        setNewTopicId(created.id);
-                      } catch (error: any) {
-                        alert(error.message || "Failed to create topic.");
-                      }
-                    }}
-                    type="button"
-                    className="px-3.5 bg-slate-900 border border-slate-800/85 text-purple-400 hover:text-purple-300 font-semibold rounded-lg text-xs cursor-pointer transition-colors shrink-0"
-                    title="Create New Topic"
-                  >
-                    + New
-                  </button>
-                </div>
+                {newTopicId ? (
+                  <div className="flex items-center justify-between bg-slate-950/20 border border-slate-800/80 px-3 py-1.5 rounded-xl w-full text-xs text-purple-400 font-semibold">
+                    <span className="flex items-center gap-1.5">
+                      <BookOpen size={12} className="text-slate-500" />
+                      Topic: {topics.find(t => t.id === newTopicId)?.name || newTopicId}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setNewTopicId('')}
+                      className="text-slate-500 hover:text-red-400 font-black cursor-pointer text-xs px-1 hover:bg-slate-850 rounded"
+                      title="Remove Topic"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-full space-y-1.5">
+                    <div className="flex items-center gap-2 bg-slate-950/20 border border-slate-800/80 px-3 py-1.5 rounded-xl w-full">
+                      <BookOpen size={12} className="text-slate-500 shrink-0" />
+                      <input
+                        type="text"
+                        value={topicSearch}
+                        onChange={e => setTopicSearch(e.target.value)}
+                        placeholder="Search or type new topic..."
+                        className="bg-transparent text-xs text-slate-300 placeholder:text-slate-700 focus:outline-none flex-1 min-w-0"
+                      />
+                    </div>
+
+                    {topics.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        <span className="text-[10px] text-slate-500 font-semibold self-center mr-1">Suggestions:</span>
+                        {topics
+                          .filter(t => t.name.toLowerCase().includes(topicSearch.toLowerCase().trim()))
+                          .map(t => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => {
+                                setNewTopicId(t.id);
+                                setTopicSearch('');
+                              }}
+                              className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                            >
+                              +{t.name}
+                            </button>
+                          ))}
+                      </div>
+                    )}
+
+                    {topicSearch.trim() && !topics.some(t => t.name.toLowerCase() === topicSearch.toLowerCase().trim()) && (
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const name = topicSearch.trim();
+                            try {
+                              const created = await createTopicApi(name);
+                              setTopics(prev => [...prev, created]);
+                              setNewTopicId(created.id);
+                              setTopicSearch('');
+                            } catch (error: any) {
+                              setModal({
+                                isOpen: true,
+                                title: 'Error',
+                                message: error.message || 'Failed to create topic.',
+                                type: 'error',
+                              });
+                            }
+                          }}
+                          className="px-2.5 py-1 bg-emerald-600/10 hover:bg-emerald-600/20 text-[10px] text-emerald-400 hover:text-emerald-350 border border-emerald-500/20 rounded-full transition-all cursor-pointer flex items-center gap-1"
+                        >
+                          <span>+ Create topic "{topicSearch.trim()}"</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -352,16 +441,111 @@ export const QuestionsPage: React.FC = () => {
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400">Tags (comma separated)</label>
-                <input
-                  type="text"
-                  placeholder="node, javascript, async"
-                  value={newTags}
-                  onChange={e => setNewTags(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm focus:outline-none text-slate-200"
-                />
-              </div>
+               <div className="space-y-2 relative">
+                 <label className="text-xs font-semibold text-slate-400">Tags</label>
+                 <div className="flex items-center gap-2 bg-slate-950/20 border border-slate-800/80 px-3 py-1.5 rounded-xl w-full">
+                   <input
+                     type="text"
+                     value={newTagInput}
+                     onChange={e => setNewTagInput(e.target.value)}
+                     onKeyDown={e => {
+                       if (e.key === 'Enter') {
+                         e.preventDefault();
+                         const trimmed = newTagInput.trim().toLowerCase();
+                         if (trimmed && !newTagsList.includes(trimmed)) {
+                           setNewTagsList(prev => [...prev, trimmed]);
+                         }
+                         setNewTagInput('');
+                       }
+                     }}
+                     placeholder="Type tag..."
+                     className="bg-transparent text-xs text-slate-300 placeholder:text-slate-750 focus:outline-none flex-1 min-w-0"
+                   />
+                   <button
+                     type="button"
+                     onClick={() => {
+                       const trimmed = newTagInput.trim().toLowerCase();
+                       if (trimmed && !newTagsList.includes(trimmed)) {
+                         setNewTagsList(prev => [...prev, trimmed]);
+                       }
+                       setNewTagInput('');
+                     }}
+                     className="text-xs text-purple-400 hover:text-purple-300 font-bold px-1 hover:bg-slate-850 rounded shrink-0 cursor-pointer"
+                   >
+                     +
+                   </button>
+                 </div>
+
+                 {newTagInput.trim() && (
+                   <div className="absolute left-0 right-0 top-[60px] bg-slate-950/95 border border-slate-800 rounded-xl shadow-2xl z-55 max-h-48 overflow-y-auto p-1.5 space-y-0.5 backdrop-blur-md">
+                     {tags
+                       .filter(t => t.name.toLowerCase().includes(newTagInput.toLowerCase().trim()) && !newTagsList.includes(t.name))
+                       .map(t => (
+                         <button
+                           key={t.id}
+                           type="button"
+                           onClick={() => {
+                             setNewTagsList(prev => [...prev, t.name]);
+                             setNewTagInput('');
+                           }}
+                           className="w-full text-left px-2.5 py-1.5 hover:bg-purple-600/10 text-xs text-purple-400 hover:text-purple-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
+                         >
+                           <span>#{t.name}</span>
+                           <span className="text-[9px] text-slate-500 font-semibold bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/80">Existing Tag</span>
+                         </button>
+                       ))}
+                     {!tags.some(t => t.name.toLowerCase() === newTagInput.toLowerCase().trim()) && (
+                       <button
+                         type="button"
+                         onClick={() => {
+                           const trimmed = newTagInput.trim().toLowerCase();
+                           if (trimmed && !newTagsList.includes(trimmed)) {
+                             setNewTagsList(prev => [...prev, trimmed]);
+                           }
+                           setNewTagInput('');
+                         }}
+                         className="w-full text-left px-2.5 py-1.5 hover:bg-emerald-600/10 text-xs text-emerald-400 hover:text-emerald-350 rounded-lg transition-colors flex items-center justify-between cursor-pointer border-t border-slate-900/50 mt-1"
+                       >
+                         <span>+ Create new tag "{newTagInput.trim().toLowerCase()}"</span>
+                         <span className="text-[9px] text-emerald-500 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">New Tag</span>
+                       </button>
+                     )}
+                   </div>
+                 )}
+
+                 {newTagsList.length > 0 && (
+                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                     {newTagsList.map(tag => (
+                       <span key={tag} className="flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-900 border border-slate-850/80 rounded-full text-[10px] text-purple-400 font-bold">
+                         #{tag}
+                         <button
+                           type="button"
+                           onClick={() => setNewTagsList(prev => prev.filter(t => t !== tag))}
+                           className="hover:text-red-400 font-black cursor-pointer text-[10px]"
+                         >
+                           ×
+                         </button>
+                       </span>
+                     ))}
+                   </div>
+                 )}
+
+                 {tags.filter(t => !newTagsList.includes(t.name)).length > 0 && (
+                   <div className="flex flex-wrap gap-1 pt-1">
+                     <span className="text-[10px] text-slate-500 font-semibold self-center mr-1">Suggestions:</span>
+                     {tags.filter(t => !newTagsList.includes(t.name)).map(t => (
+                       <button
+                         key={t.id}
+                         type="button"
+                         onClick={() => setNewTagsList(prev => [...prev, t.name])}
+                         className="px-2 py-0.5 bg-slate-900/50 hover:bg-purple-950/20 hover:border-purple-500/30 text-[10px] text-slate-450 hover:text-purple-400 border border-slate-800/80 rounded-full transition-colors cursor-pointer"
+                       >
+                         +{t.name}
+                       </button>
+                     ))}
+                   </div>
+                 )}
+               </div>
 
               <div className="flex gap-3 pt-2">
                 <button
@@ -397,20 +581,61 @@ export const QuestionsPage: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <button
-                  onClick={async () => {
-                    try {
-                      await addToRevisionApi(selectedQuestion.id, RevisionItemType.QUESTION);
-                      alert('Question added to revision deck!');
-                    } catch (error: any) {
-                      alert(error.message || 'Failed to add to revisions');
-                    }
-                  }}
-                  className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded-lg text-xs transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <BookOpen size={12} />
-                  Queue Revision
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await addToRevisionApi(selectedQuestion.id, RevisionItemType.QUESTION);
+                        setModal({
+                          isOpen: true,
+                          title: 'Success',
+                          message: 'Question added to revision deck!',
+                          type: 'success',
+                        });
+                      } catch (error: any) {
+                        setModal({
+                          isOpen: true,
+                          title: 'Failed',
+                          message: error.message || 'Failed to add to revisions',
+                          type: 'error',
+                        });
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 font-semibold rounded-lg text-xs transition-colors border border-purple-500/20 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <BookOpen size={12} />
+                    Queue Revision
+                  </button>
+                  <button
+                    onClick={() => {
+                      const titleText = selectedQuestion?.title ? `"${selectedQuestion.title}"` : 'this question';
+                      setModal({
+                        isOpen: true,
+                        title: 'Delete Question',
+                        message: `Are you sure you want to permanently delete the practice question ${titleText}? This action cannot be undone.`,
+                        type: 'confirm',
+                        onConfirm: async () => {
+                          try {
+                            await deleteQuestionApi(selectedQuestion.id);
+                            setQuestions(prev => prev.filter(q => q.id !== selectedQuestion.id));
+                            setSelectedQuestion(null);
+                          } catch (error: any) {
+                            setModal({
+                              isOpen: true,
+                              title: 'Error',
+                              message: error.message || 'Failed to delete question.',
+                              type: 'error',
+                            });
+                          }
+                        }
+                      });
+                    }}
+                    className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors cursor-pointer border border-transparent hover:border-slate-800/80"
+                    title="Delete Question"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-slate-100 leading-tight">
                 {selectedQuestion.title}
@@ -564,6 +789,7 @@ export const QuestionsPage: React.FC = () => {
           </div>
         )}
       </div>
+      <Modal {...modal} onClose={() => setModal(p => ({ ...p, isOpen: false }))} />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { fetchDashboardMetricsApi } from '../api/dashboard';
 import type { DashboardMetrics } from '../api/dashboard';
-import { FileText, Target, BookOpen, LogOut, Loader2, Sparkles, Award, ClipboardCheck, ArrowRight, User as UserIcon } from 'lucide-react';
+import { FileText, Target, BookOpen, LogOut, Loader2, Sparkles, Award, ClipboardCheck, ArrowRight, User as UserIcon, Tag as TagIcon } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -91,6 +91,13 @@ export const DashboardPage: React.FC = () => {
           </div>
           <div className="flex gap-3 z-10 shrink-0">
             <button
+              onClick={() => navigate('/taxonomy')}
+              className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-350 hover:text-slate-200 border border-slate-800 font-bold rounded-xl text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+            >
+              <TagIcon size={14} className="text-pink-400" />
+              Manage Tags & Topics
+            </button>
+            <button
               onClick={() => navigate('/revision')}
               className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/10 text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
@@ -169,6 +176,87 @@ export const DashboardPage: React.FC = () => {
             <div className="space-y-1">
               <span className="text-2xl font-black text-slate-200 block">{metrics.revisionDueCount}</span>
               <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Reviews Due Today</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Step-by-Step Study Journey */}
+        <div className="space-y-4 pt-2">
+          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+            🚀 Your Prep Journey
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Step 1: Notes */}
+            <div
+              onClick={() => navigate('/notes')}
+              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+            >
+              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-purple-400">01</div>
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold text-purple-450 uppercase tracking-widest block">Step 1: Concepts</span>
+                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-purple-300 transition-colors">Write Study Notes</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Draft syntax examples, key questions, and architectural logs. Keep your library updated.
+                </p>
+              </div>
+              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-350 flex items-center gap-1">
+                Go to Notes <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+
+            {/* Step 2: Goals */}
+            <div
+              onClick={() => navigate('/goals')}
+              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+            >
+              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-pink-400">02</div>
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold text-pink-450 uppercase tracking-widest block">Step 2: Milestones</span>
+                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-pink-300 transition-colors">Set Study Goals</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Establish custom milestone deadlines and link target study topics to stay focused.
+                </p>
+              </div>
+              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-355 flex items-center gap-1">
+                Go to Goals <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+
+            {/* Step 3: Practice */}
+            <div
+              onClick={() => navigate('/questions')}
+              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+            >
+              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-amber-400">03</div>
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold text-amber-450 uppercase tracking-widest block">Step 3: Verification</span>
+                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-amber-300 transition-colors">Practice & AI Check</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Attempt coding challenges, draft answers, and get real-time scores and keyword critiques from AI.
+                </p>
+              </div>
+              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-360 flex items-center gap-1">
+                Go to Practice <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+
+            {/* Step 4: Spaced Repetition */}
+            <div
+              onClick={() => navigate('/revision')}
+              className="relative p-5 rounded-2xl border border-slate-850 bg-slate-900/10 hover:bg-slate-900/20 hover:border-slate-800 transition-all cursor-pointer group flex flex-col justify-between h-44"
+            >
+              <div className="absolute top-4 right-4 text-xs font-bold text-slate-700 group-hover:text-blue-400">04</div>
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold text-blue-450 uppercase tracking-widest block">Step 4: Retention</span>
+                <h3 className="text-sm font-extrabold text-slate-200 group-hover:text-blue-300 transition-colors">Spaced Repetition</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Queue cards and run review sessions using the SM-2 algorithm to enforce absolute retention.
+                </p>
+              </div>
+              <span className="text-[10px] font-semibold text-slate-500 group-hover:text-slate-365 flex items-center gap-1">
+                Go to Revision <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
             </div>
           </div>
         </div>

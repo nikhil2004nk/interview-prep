@@ -39,7 +39,7 @@ import { RevisionModule } from './revision/revision.module';
         RevisionRecord,
         AiEvaluation,
       ],
-      synchronize: true, // Only for development; disable in production
+      synchronize: process.env.NODE_ENV !== 'production', // Disable in production
     }),
     UsersModule,
     AuthModule,

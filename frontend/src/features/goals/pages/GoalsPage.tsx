@@ -9,13 +9,27 @@ import {
 import type { Goal } from '../api/goals';
 import type { Topic } from '../../notes/api/notes';
 import { fetchTopicsApi } from '../../topics/api/topics';
-import { Search, Plus, Trash2, ArrowLeft, Calendar, CheckSquare, Square, Target, Award, Clock } from 'lucide-react';
+import { Search, Plus, Trash2, ArrowLeft, Calendar, CheckSquare, Square, Target, Award, Clock, FileText, HelpCircle, BookOpen, LogOut, X } from 'lucide-react';
+import { useAuth } from '../../auth/hooks/useAuth';
+import { Modal } from '../../../components/ui/Modal';
+import { Dropdown } from '../../../components/ui/Dropdown';
 
 export const GoalsPage: React.FC = () => {
+  const { logout } = useAuth();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'confirm' | 'error' | 'success';
+    onConfirm?: () => void;
+  }>({ isOpen: false, title: '', message: '', type: 'info' });
   const [topics, setTopics] = useState<Topic[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState('');
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState('');
 
   // Creation Form
   const [showAddForm, setShowAddForm] = useState(false);
@@ -33,9 +47,6 @@ export const GoalsPage: React.FC = () => {
       ]);
       setGoals(goalsData);
       setTopics(topicsData);
-      if (goalsData.length > 0 && !selectedGoal) {
-        setSelectedGoal(goalsData[0]);
-      }
     } catch (error) {
       console.error('Failed to load goals workspace', error);
     }
@@ -44,6 +55,15 @@ export const GoalsPage: React.FC = () => {
   useEffect(() => {
     loadGoalsData();
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQuery.trim().length >= 3 || searchQuery.trim().length === 0) {
+        setDebouncedSearchQuery(searchQuery);
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   const handleCreateGoal = async () => {
     if (!newTitle.trim() || !newTargetDate) return;
@@ -76,17 +96,26 @@ export const GoalsPage: React.FC = () => {
     }
   };
 
-  const handleDeleteGoal = async (id: string) => {
-    if (!window.confirm('Delete this study goal?')) return;
-    try {
-      await deleteGoalApi(id);
-      setGoals(prev => prev.filter(g => g.id !== id));
-      if (selectedGoal?.id === id) {
-        setSelectedGoal(null);
+  const handleDeleteGoal = (id: string) => {
+    const target = goals.find(g => g.id === id);
+    const titleText = target?.title ? `"${target.title}"` : 'this study goal';
+    setModal({
+      isOpen: true,
+      title: 'Delete Milestone',
+      message: `Are you sure you want to permanently delete the study goal ${titleText}?`,
+      type: 'confirm',
+      onConfirm: async () => {
+        try {
+          await deleteGoalApi(id);
+          setGoals(prev => prev.filter(g => g.id !== id));
+          if (selectedGoal?.id === id) {
+            setSelectedGoal(null);
+          }
+        } catch (error) {
+          console.error('Failed to delete goal', error);
+        }
       }
-    } catch (error) {
-      console.error('Failed to delete goal', error);
-    }
+    });
   };
 
   const toggleTopicSelection = (topicId: string) => {
@@ -95,10 +124,22 @@ export const GoalsPage: React.FC = () => {
     );
   };
 
-  const filteredGoals = goals.filter(g =>
-    g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (g.topics || []).some(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredGoals = goals.filter(g => {
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    const matchesSearch = !query ||
+      g.title.toLowerCase().includes(query) ||
+      (g.topics || []).some(t => t.name.toLowerCase().includes(query));
+
+    const matchesStatus =
+      !selectedStatusFilter ||
+      (selectedStatusFilter === 'COMPLETED' ? g.completed : !g.completed);
+
+    const matchesTopic =
+      !selectedTopicFilter ||
+      (g.topics || []).some(t => t.id === selectedTopicFilter);
+
+    return matchesSearch && matchesStatus && matchesTopic;
+  });
 
   const getDaysRemainingText = (dateStr: string) => {
     const target = new Date(dateStr);
@@ -127,13 +168,43 @@ export const GoalsPage: React.FC = () => {
             <button
               onClick={() => navigate('/')}
               className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Back to Workspace"
+              title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>
             <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Study Goals
             </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/notes')}
+              title="Notes Workspace"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <FileText size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/questions')}
+              title="Practice Center"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+            >
+              <HelpCircle size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/revision')}
+              title="Revision Deck"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
+            >
+              <BookOpen size={16} />
+            </button>
+            <button
+              onClick={logout}
+              title="Sign Out"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
 
@@ -148,9 +219,42 @@ export const GoalsPage: React.FC = () => {
               placeholder="Search goals..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-9 py-2 bg-slate-950/60 border border-slate-800/80 focus:border-purple-500/50 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none transition-colors"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-350 cursor-pointer"
+                title="Clear Search"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
+        </div>
+
+        {/* Filters */}
+        <div className="px-4 pb-3 border-b border-slate-900/50 space-y-1.5">
+          <Dropdown
+            value={selectedStatusFilter}
+            onChange={setSelectedStatusFilter}
+            options={[
+              { value: '', label: 'All Milestones' },
+              { value: 'ACTIVE', label: 'Active Goals' },
+              { value: 'COMPLETED', label: 'Completed' },
+            ]}
+            placeholder="Filter Status"
+          />
+
+          <Dropdown
+            value={selectedTopicFilter}
+            onChange={setSelectedTopicFilter}
+            options={[
+              { value: '', label: 'All Topics' },
+              ...topics.map(t => ({ value: t.id, label: t.name })),
+            ]}
+            placeholder="All Topics"
+          />
         </div>
 
         {/* Goals list */}
@@ -404,6 +508,7 @@ export const GoalsPage: React.FC = () => {
           </div>
         )}
       </div>
+      <Modal {...modal} onClose={() => setModal(p => ({ ...p, isOpen: false }))} />
     </div>
   );
 };

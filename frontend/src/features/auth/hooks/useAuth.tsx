@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { loginApi, registerApi, logoutApi, getMeApi } from '../api/auth';
 import type { User } from '../api/auth';
 
@@ -22,15 +22,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const currentUser = await getMeApi();
       setUser(currentUser);
     } catch {
+      // getMeApi will automatically try to refresh the token via apiFetch
+      // If it still fails, the user is truly logged out
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Listen for auth:expired events from apiFetch (token refresh failed)
+  const handleAuthExpired = useCallback(() => {
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     loadUser();
-  }, []);
+
+    window.addEventListener('auth:expired', handleAuthExpired);
+    return () => {
+      window.removeEventListener('auth:expired', handleAuthExpired);
+    };
+  }, [handleAuthExpired]);
 
   const login = async (email: string, passwordPlain: string) => {
     setIsLoading(true);

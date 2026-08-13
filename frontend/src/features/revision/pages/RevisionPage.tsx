@@ -7,28 +7,43 @@ import {
   deleteFromRevisionApi
 } from '../api/revision';
 import type { RevisionRecord } from '../api/revision';
-import { ArrowLeft, BookOpen, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, BookOpen, Trash2, Eye, FileText, HelpCircle, Target, LogOut } from 'lucide-react';
+import { useAuth } from '../../auth/hooks/useAuth';
+import { Modal } from '../../../components/ui/Modal';
+import { Dropdown } from '../../../components/ui/Dropdown';
+import type { Topic } from '../../notes/api/notes';
+import { fetchTopicsApi } from '../../topics/api/topics';
 
 export const RevisionPage: React.FC = () => {
+  const { logout } = useAuth();
   const [records, setRecords] = useState<RevisionRecord[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<RevisionRecord | null>(null);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'confirm' | 'error' | 'success';
+    onConfirm?: () => void;
+  }>({ isOpen: false, title: '', message: '', type: 'info' });
   const [isRevealed, setIsRevealed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState('');
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState('');
 
   const navigate = useNavigate();
 
   const loadDueRevisions = async () => {
     setLoading(true);
     try {
-      const data = await fetchDueRevisionsApi();
-      setRecords(data);
-      if (data.length > 0) {
-        setSelectedRecord(data[0]);
-      } else {
-        setSelectedRecord(null);
-      }
+      const [revisionsData, topicsData] = await Promise.all([
+        fetchDueRevisionsApi(),
+        fetchTopicsApi()
+      ]);
+      setRecords(revisionsData);
+      setTopics(topicsData);
     } catch (error) {
-      console.error('Failed to load due revisions', error);
+      console.error('Failed to load due revisions workspace', error);
     } finally {
       setLoading(false);
     }
@@ -58,24 +73,40 @@ export const RevisionPage: React.FC = () => {
     }
   };
 
-  const handleRemove = async (id: string) => {
-    if (!window.confirm('Remove this item from your spaced repetition schedule?')) return;
-    try {
-      await deleteFromRevisionApi(id);
-      const remaining = records.filter(r => r.id !== id);
-      setRecords(remaining);
-      setIsRevealed(false);
-      if (selectedRecord?.id === id) {
-        if (remaining.length > 0) {
-          setSelectedRecord(remaining[0]);
-        } else {
-          setSelectedRecord(null);
+  const handleRemove = (id: string) => {
+    const target = records.find(r => r.id === id);
+    const titleText = target?.item?.title ? `"${target.item.title}"` : 'this item';
+    setModal({
+      isOpen: true,
+      title: 'Remove Revision',
+      message: `Are you sure you want to remove ${titleText} from your spaced repetition schedule?`,
+      type: 'confirm',
+      onConfirm: async () => {
+        try {
+          await deleteFromRevisionApi(id);
+          const remaining = records.filter(r => r.id !== id);
+          setRecords(remaining);
+          setIsRevealed(false);
+          if (selectedRecord?.id === id) {
+            if (remaining.length > 0) {
+              setSelectedRecord(remaining[0]);
+            } else {
+              setSelectedRecord(null);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to remove item from schedule', error);
         }
       }
-    } catch (error) {
-      console.error('Failed to remove item from schedule', error);
-    }
+    });
   };
+
+  const filteredRecords = records.filter(r => {
+    const matchesType = !selectedTypeFilter || r.itemType === selectedTypeFilter;
+    const targetTopic = topics.find(t => t.id === selectedTopicFilter);
+    const matchesTopic = !selectedTopicFilter || (targetTopic && r.item?.topic?.name === targetTopic.name);
+    return matchesType && matchesTopic;
+  });
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
@@ -87,19 +118,75 @@ export const RevisionPage: React.FC = () => {
             <button
               onClick={() => navigate('/')}
               className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Back to Workspace"
+              title="Back to Dashboard"
             >
               <ArrowLeft size={16} />
             </button>
-            <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Revision Deck
-            </span>
+            <div className="flex flex-col">
+              <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Revision Deck
+              </span>
+              {filteredRecords.length > 0 && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-black self-start mt-0.5">
+                  {filteredRecords.length} Due Today
+                </span>
+              )}
+            </div>
           </div>
-          {records.length > 0 && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 font-black">
-              {records.length} Due
-            </span>
-          )}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/notes')}
+              title="Notes Workspace"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <FileText size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/questions')}
+              title="Practice Center"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-purple-400 transition-colors cursor-pointer"
+            >
+              <HelpCircle size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/goals')}
+              title="Study Goals"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-pink-400 transition-colors cursor-pointer"
+            >
+              <Target size={16} />
+            </button>
+            <button
+              onClick={logout}
+              title="Sign Out"
+              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="px-4 pt-4 pb-3 border-b border-slate-900/50 space-y-1.5 bg-slate-900/10">
+          <Dropdown
+            value={selectedTypeFilter}
+            onChange={setSelectedTypeFilter}
+            options={[
+              { value: '', label: 'All Card Types' },
+              { value: RevisionItemType.NOTE, label: 'Notes' },
+              { value: RevisionItemType.QUESTION, label: 'Questions' },
+            ]}
+            placeholder="Filter Card Type"
+          />
+
+          <Dropdown
+            value={selectedTopicFilter}
+            onChange={setSelectedTopicFilter}
+            options={[
+              { value: '', label: 'All Topics' },
+              ...topics.map(t => ({ value: t.id, label: t.name })),
+            ]}
+            placeholder="All Topics"
+          />
         </div>
 
         {/* Due Items List */}
@@ -108,7 +195,7 @@ export const RevisionPage: React.FC = () => {
             <div className="text-center py-8 text-xs text-slate-500 font-medium">
               Loading revision deck...
             </div>
-          ) : records.length === 0 ? (
+          ) : filteredRecords.length === 0 ? (
             <div className="text-center py-8 text-xs text-slate-600 font-medium space-y-2">
               <p>🎉 All caught up!</p>
               <p className="text-[10px] px-4 leading-normal">
@@ -116,7 +203,7 @@ export const RevisionPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            records.map(r => (
+            filteredRecords.map(r => (
               <div
                 key={r.id}
                 onClick={() => {
@@ -260,15 +347,25 @@ export const RevisionPage: React.FC = () => {
             <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
               <BookOpen size={24} />
             </div>
-            <div className="space-y-1">
-              <h3 className="font-bold text-slate-300">All Revisions Cleared</h3>
-              <p className="text-slate-500 text-sm max-w-xs">
-                Excellent! You have reviewed all scheduled items for today. Add more notes or practice tasks to review them again later.
-              </p>
-            </div>
+            {records.length > 0 ? (
+              <div className="space-y-1">
+                <h3 className="font-bold text-slate-300">No Card Selected</h3>
+                <p className="text-slate-500 text-sm max-w-xs">
+                  Select a card from the due revision deck on the left to start your active recall review session.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h3 className="font-bold text-slate-300">All Revisions Cleared</h3>
+                <p className="text-slate-500 text-sm max-w-xs">
+                  Excellent! You have reviewed all scheduled items for today. Add more notes or practice tasks to review them again later.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
+      <Modal {...modal} onClose={() => setModal(p => ({ ...p, isOpen: false }))} />
     </div>
   );
 };

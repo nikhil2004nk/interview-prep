@@ -51,3 +51,9 @@ export async function submitAnswerApi(questionId: string, userAnswer: string): P
 export async function fetchQuestionPracticesApi(questionId: string): Promise<Answer[]> {
   return apiFetch<Answer[]>(`/answers/question/${questionId}`);
 }
+
+export async function deleteQuestionApi(id: string): Promise<void> {
+  return apiFetch<void>(`/questions/${id}`, {
+    method: 'DELETE',
+  });
+}

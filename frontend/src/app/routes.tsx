@@ -7,6 +7,7 @@ import { QuestionsPage } from '../features/questions/pages/QuestionsPage';
 import { GoalsPage } from '../features/goals/pages/GoalsPage';
 import { RevisionPage } from '../features/revision/pages/RevisionPage';
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage';
+import { TaxonomyPage } from '../features/taxonomy/pages/TaxonomyPage';
 
 const AuthGuard: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -68,6 +69,10 @@ export const routes = [
       {
         path: '/revision',
         element: <RevisionPage />,
+      },
+      {
+        path: '/taxonomy',
+        element: <TaxonomyPage />,
       },
     ],
   },

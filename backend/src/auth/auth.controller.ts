@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Get, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, UseGuards, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import * as express from 'express';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
@@ -7,27 +7,34 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { User } from '../users/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   private setCookies(res: express.Response, accessToken: string, refreshToken: string) {
+    const accessMaxAge = parseInt(this.configService.get<string>('JWT_ACCESS_COOKIE_MAX_AGE') || '900000', 10);
+    const refreshMaxAge = parseInt(this.configService.get<string>('JWT_REFRESH_COOKIE_MAX_AGE') || '604800000', 10);
+
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 mins
+      maxAge: accessMaxAge, // Default: 15 mins
     });
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: refreshMaxAge, // Default: 7 days
     });
   }
 
@@ -82,5 +89,31 @@ export class AuthController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = user;
     return result;
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Res({ passthrough: true }) res: any) {
+    const refreshToken = res.req?.cookies?.refresh_token;
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token');
+    }
+
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+      const user = await this.usersService.findById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      const tokens = await this.authService.generateTokens(user);
+      this.setCookies(res, tokens.accessToken, tokens.refreshToken);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    } catch {
+      this.clearCookies(res);
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

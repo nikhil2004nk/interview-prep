@@ -1,1 +1,168 @@
 @import "tailwindcss";
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: oklch(0.37 0.02 270);
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.45 0.04 280);
+}
+
+/* ================================================
+   TipTap Rich Text Editor Styles
+   ================================================ */
+
+/* Base editor styling */
+.rich-editor-content {
+  outline: none;
+  color: oklch(0.78 0.01 270);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+/* Placeholder */
+.rich-editor-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: oklch(0.35 0.01 270);
+  pointer-events: none;
+  height: 0;
+}
+
+/*
+ * TipTap Color extension applies inline style="color:..." on <span>.
+ * TipTap Highlight applies inline style="background-color:..." on <mark>.
+ * We intentionally do NOT set color on headings/strong/em so these inline styles work.
+ */
+
+/* Headings — don't set color so inline color works inside headings */
+.rich-editor-content h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 1rem 0 0.5rem;
+  line-height: 1.3;
+}
+
+.rich-editor-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.85rem 0 0.4rem;
+  line-height: 1.35;
+}
+
+.rich-editor-content h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.75rem 0 0.35rem;
+  line-height: 1.4;
+}
+
+.rich-editor-content p {
+  margin: 0.35rem 0;
+}
+
+/* Bold / Italic / Strikethrough — don't set color so inline color works */
+.rich-editor-content strong {
+  font-weight: 700;
+}
+
+.rich-editor-content em {
+  font-style: italic;
+}
+
+.rich-editor-content s {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Lists */
+.rich-editor-content ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.rich-editor-content ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.rich-editor-content ul ul {
+  list-style-type: circle !important;
+}
+
+.rich-editor-content ul ul ul {
+  list-style-type: square !important;
+}
+
+.rich-editor-content li {
+  margin: 0.15rem 0;
+  display: list-item !important;
+}
+
+.rich-editor-content li p {
+  margin: 0;
+  display: inline;
+}
+
+/* Inline code */
+.rich-editor-content code {
+  background: oklch(0.18 0.01 270);
+  border: 1px solid oklch(0.25 0.02 270);
+  border-radius: 4px;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.82em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: oklch(0.75 0.12 300);
+}
+
+/* Code block */
+.rich-editor-content pre {
+  background: oklch(0.14 0.01 270);
+  border: 1px solid oklch(0.22 0.02 270);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+}
+
+.rich-editor-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.82em;
+  color: oklch(0.78 0.06 290);
+}
+
+/* Blockquote */
+.rich-editor-content blockquote {
+  border-left: 3px solid oklch(0.55 0.18 290);
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+  color: oklch(0.65 0.03 280);
+  font-style: italic;
+}
+
+/* Horizontal rule */
+.rich-editor-content hr {
+  border: none;
+  border-top: 1px solid oklch(0.25 0.02 270);
+  margin: 1rem 0;
+}
+
+/* Highlight mark element */
+.rich-editor-content mark {
+  background-color: inherit;
+  border-radius: 2px;
+  padding: 0.05rem 0.1rem;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
