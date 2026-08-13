@@ -16,10 +16,8 @@ async function bootstrap() {
     
     app.use(cookieParser());
     
-    app.enableCors({
-      origin: true,
-      credentials: true,
-    });
+    // CORS is now entirely handled by Vercel Edge (vercel.json) to prevent duplicates
+    // app.enableCors({ ... });
     console.log('[Bootstrap] CORS configured');
 
     await app.init();
@@ -47,12 +45,7 @@ async function bootstrap() {
 let bootstrapPromise: Promise<void> | null = null;
 
 export default async (req: any, res: any) => {
-  // Always set CORS headers for all requests in Vercel to avoid missing headers on 500
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-
+  // If Vercel routes an OPTIONS preflight to the function, just return 200 OK
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -66,7 +59,7 @@ export default async (req: any, res: any) => {
     }
     server(req, res);
   } catch (err: any) {
-    console.error('Bootstrap error:', err);
+    console.error('[Bootstrap] Handler caught an error:', err);
     res.status(500).json({ error: 'Initialization error', message: err.message, stack: err.stack });
   }
 };
